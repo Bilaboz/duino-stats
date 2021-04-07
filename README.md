@@ -31,6 +31,14 @@ Duino stats is a discord bot made with discord.js v12 for Duino-Coin
 ```sh
 npm install
 ```
+## Configuration
+
+Create a `.env` file, and replace your bot token and your mongodb connection url in it
+
+```
+token=<discord bot token>
+mongoURL=<mongodb connection url>
+```
 
 ## Usage
 

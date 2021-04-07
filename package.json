@@ -1,0 +1,32 @@
+{
+  "name": "duino-stats",
+  "version": "1.0.0",
+  "description": "Duino stats is a discord bot made with discord.js v12 for Duino-Coin",
+  "main": "index.js",
+  "dependencies": {
+    "@vitalets/google-translate-api": "^5.0.0",
+    "axios": "^0.21.1",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.2.0",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.33",
+    "mongoose": "^5.11.15"
+  },
+  "scripts": {
+    "run": "node index"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bilaboz/duino-stats.git"
+  },
+  "keywords": [
+    "duino",
+    "coin"
+  ],
+  "author": "Bilaboz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bilaboz/duino-stats/issues"
+  },
+  "homepage": "https://github.com/Bilaboz/duino-stats#readme"
+}

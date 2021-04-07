@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const snipeSchema = mongoose.Schema({
+const snipeSchema = mongoose.Schema ({
     date: String,
     content: String,
     authorAvatar: String,

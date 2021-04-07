@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const profileSchema = mongoose.Schema({
+const profileSchema = mongoose.Schema ({
     username: String,
     userID: String,
     guildID: String,

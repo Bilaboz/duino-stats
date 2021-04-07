@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const countSchema = mongoose.Schema({
+const countSchema = mongoose.Schema ({
     record: Number,
     count: Number,
     guildId: String

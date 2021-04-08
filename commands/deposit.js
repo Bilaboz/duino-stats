@@ -22,7 +22,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const embed = new MessageEmbed()
         .setAuthor(message.author.username, message.author.avatarURL())
-        .setFooter("Automatically canceled after 30 seconds", client.user.avatarURL())
+        .setFooter("Automatically canceled after 30s", client.user.avatarURL())
         .setTimestamp()
         .setColor(color.orange)
         .setDescription(`Are you sure that you want to exchange **${ducoAmount}** <:duco:807188450393980958> to **${coinAmount} coins**?`)
@@ -122,22 +122,53 @@ module.exports.run = async (client, message, args, color) => {
         return msg.edit(embed);
     }
 
-    const tx = transactionsList.data[txid];
+    let tx = transactionsList.data[txid];
     if (!tx) {
-        embed.setColor(color.red);
-        embed.setDescription("`ERROR`: Impossible to find the transaction!\nIf you already sent the funds, please contact an administrator to get refunded");
-        return msg.edit(embed);
+        embed.setColor(color.orange);
+        embed.setDescription(`\`ERROR\`: Impossible to find the transaction
+                             Please do not the send transaction before it appears on [the explorer](https://explorer.duinocoin.com)
+                             Retrying in 15s ...`);
+        msg.edit(embed);
+
+        const sleep = (ms) => {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        await sleep(15000);
+
+        const transactionsList2 = await axios.get(transactionsApi);
+        if (!transactionsList2.data) {
+            embed.setColor(color.red);
+            embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
+            return msg.edit(embed);
+        }
+
+        tx = transactionsList2.data[txid];
+        if (!tx) {
+            embed.setColor(color.red);
+            embed.setDescription(`\`ERROR\`: Impossible to find the transaction
+                                 Please do not the send transaction before it appears on [the explorer](https://explorer.duinocoin.com)
+                                 If you already sent the funds, please contact an administrator to get refunded`);
+            return msg.edit(embed);
+        }
     }
 
     const txDate = moment(`${tx.Date} ${tx.Time}`, "DD/MM/YYYY hh:mm:ss");
 
-    console.log(tx.Sender == username)
-    console.log(tx.Recipient == "coinexchange")
-    console.log(tx.Amount == ducoAmount)
-    console.log(before.diff(txDate, "minutes") < 6)
-    console.log(!(alreadyUsedTxid.has(txid)))
+    console.log(message.author.username)
+    console.log(tx.Sender == username);
+    console.log(tx.Recipient == "coinexchange");
+    console.log(tx.Amount == ducoAmount);
+    console.log(before.diff(txDate, "minutes") < 6);
+    console.log(!(alreadyUsedTxid.has(txid)));
 
-    if ((tx.Sender == username) && (tx.Recipient == "coinexchange") && (tx.Amount == ducoAmount) && (before.diff(txDate, "minutes") < 6) && !(alreadyUsedTxid.has(txid))) {
+    if (
+        (tx.Sender == username) &&
+        (tx.Recipient == "coinexchange") &&
+        (tx.Amount == ducoAmount) &&
+        (before.diff(txDate, "minutes") < 6) &&
+        !(alreadyUsedTxid.has(txid))
+        ) {
         const query = await Profile.findOne({ userID: message.author.id, guildID: message.guild.id });
         if (!query) {
             const newProfile = new Profile({
@@ -164,7 +195,14 @@ module.exports.run = async (client, message, args, color) => {
         msg.edit(embed);
     } else {
         embed.setColor(color.red);
-        embed.setDescription("`ERROR`: Invalid transaction! The date, the amount, the recipient or the sender is invalid!\nIf you already sent the funds, please contact an administrator to get refunded");
+        embed.setDescription(`\`ERROR\`: Invalid transaction!\nIf you already sent the funds, please contact an administrator to get refunded`);
+        embed.addFields(
+            { name: "Sender", value: tx.Sender == username, inline: true },
+            { name: "Recipient", value: tx.Recipient == "coinexchange", inline: true },
+            { name: "Amount", value: tx.Amount == ducoAmount, inline: true },
+            { name: "Time", value: before.diff(txDate, "minutes") < 6, inline: true },
+            { name: "Already used", value: alreadyUsedTxid.has(txid), inline: true }
+        );
         return msg.edit(embed);
     }
 }

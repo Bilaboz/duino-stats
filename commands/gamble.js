@@ -1,6 +1,5 @@
 const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
-const Stat = require("../models/stat.js");
 
 module.exports.run = async (client, message, args, color) => {
 

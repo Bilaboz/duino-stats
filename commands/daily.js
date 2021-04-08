@@ -43,7 +43,6 @@ module.exports.run = async (client, message, args, color) => {
     if (query.lastClaim) {
         const lastClaim = moment.unix(query.lastClaim);
         const difference = now.diff(lastClaim, "hours");
-        console.log(difference);
 
         if (difference >= 24) {
             if (!query.streak) query.streak = 0;

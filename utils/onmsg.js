@@ -166,6 +166,10 @@ module.exports.run = async (client, message, args, color) => {
                 newBank.save().catch(err => message.channel.send(`Oops something went wrong ${err} at onmsg lmao`));
                 message.channel.send(wEmbed).then(m => m.delete({ timeout: 4000 }));
             } else {
+                if (message.author.username !== query.username) { // if the user chnaged his username, update it
+                    query.username = message.author.username;
+                }
+                
                 query.coins += cAmount;
                 query.save().catch(err => message.channel.send(`Oops something went wrong ${err}`));
                 message.channel.send(wEmbed).then(m => m.delete({ timeout: 4000 }));

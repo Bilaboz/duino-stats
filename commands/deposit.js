@@ -15,6 +15,7 @@ module.exports.run = async (client, message, args, color) => {
     if (ducoAmount < 1.5) return message.channel.send("The minimum amount of DUCO to deposit is 1.5");
 
     const coinAmount = parseInt((ducoAmount * 100) / 1.5);
+    const commandsChannel = client.channels.cache.get("699320187664728177") // #commands channel
 
     const username = args[2];
     if (!username) return message.channel.send("Please specify your Duino-Coin username");
@@ -22,7 +23,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const embed = new MessageEmbed()
         .setAuthor(message.author.username, message.author.avatarURL())
-        .setFooter("Automatically canceled after 30s", client.user.avatarURL())
+        .setFooter("Automatically canceled after 30 seconds", client.user.avatarURL())
         .setTimestamp()
         .setColor(color.orange)
         .setDescription(`Are you sure that you want to exchange **${ducoAmount}** <:duco:807188450393980958> to **${coinAmount} coins**?`)
@@ -100,13 +101,15 @@ module.exports.run = async (client, message, args, color) => {
         embed.setDescription("Deposit request cancelled: you didn't sent the transaction ID. If you already sent the funds, please contact an administrator to get refunded");
         embed.setColor(color.red);
         msg.reactions.removeAll();
-        return msg.edit(embed);
+        msg.edit(embed);
+        return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
     }
 
     if (!/^[0-9a-z]{40}$/.test(msgCollected.first().content)) {
         embed.setColor(color.red);
         embed.setDescription("`ERROR`: The transaction ID that you sent is invalid\nIf you already sent the funds, please contact an administrator to get refunded");
-        return msg.edit(embed);
+        msg.edit(embed);
+        return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
     }
 
     const txid = msgCollected.first().content;
@@ -119,7 +122,8 @@ module.exports.run = async (client, message, args, color) => {
     if (!transactionsList.data) {
         embed.setColor(color.red);
         embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
-        return msg.edit(embed);
+        msg.edit(embed);
+        return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
     }
 
     let tx = transactionsList.data[txid];
@@ -140,7 +144,8 @@ module.exports.run = async (client, message, args, color) => {
         if (!transactionsList2.data) {
             embed.setColor(color.red);
             embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
-            return msg.edit(embed);
+            msg.edit(embed);
+            return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
         }
 
         tx = transactionsList2.data[txid];
@@ -149,7 +154,8 @@ module.exports.run = async (client, message, args, color) => {
             embed.setDescription(`\`ERROR\`: Impossible to find the transaction
                                  Please do not the send transaction before it appears on [the explorer](https://explorer.duinocoin.com)
                                  If you already sent the funds, please contact an administrator to get refunded`);
-            return msg.edit(embed);
+            msg.edit(embed);
+            return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
         }
     }
 
@@ -193,6 +199,8 @@ module.exports.run = async (client, message, args, color) => {
         embed.setDescription(`Successfully exchanged **${ducoAmount} DUCO** to **${coinAmount} coins**!`);
 
         msg.edit(embed);
+
+        commandsChannel.send(`<@!${message.author.id}> deposited **${ducoAmount} duco** from account **${username}**`);
     } else {
         embed.setColor(color.red);
         embed.setDescription(`\`ERROR\`: Invalid transaction!\nIf you already sent the funds, please contact an administrator to get refunded`);
@@ -203,7 +211,8 @@ module.exports.run = async (client, message, args, color) => {
             { name: "Time", value: before.diff(txDate, "minutes") < 6, inline: true },
             { name: "Already used", value: alreadyUsedTxid.has(txid), inline: true }
         );
-        return msg.edit(embed);
+        msg.edit(embed);
+        return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
     }
 }
 

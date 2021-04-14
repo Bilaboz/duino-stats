@@ -75,6 +75,10 @@ module.exports.run = async (client, message, args, color) => {
                                 [View transaction in the explorer](https://explorer.duinocoin.com?search=${txid})`)
 
             msg.edit(embed);
+
+            client.channels.cache
+                .get("699320187664728177") // #commands channel
+                .send(`<@!${message.author.id}> exchanged **${amount} coins** to account **${ducoUsername}**`);
         } else if (data === "OK") {
             socket.write(`SEND,-,${ducoUsername},${ducoAmount}`);
         } else {

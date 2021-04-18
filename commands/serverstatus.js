@@ -36,15 +36,26 @@ module.exports.run = async (client, message, args, color) => {
         if (difference > 60) {
             difference = `${parseInt(difference / 60)} minutes`
         } else {
-            difference = `${difference} seconds`
+            if (difference === 1) {
+                difference = `${difference} second`
+            } else {
+                difference = `${difference} seconds`
+            }
         }
 
         if (statsStatus) {
-            finalstring += `**Statistics status**: <:true:709441577503817799> (Last update: ${difference} ago)`;
+            finalstring += `**Statistics status**: <:true:709441577503817799> (Last update: ${difference} ago)\n`;
         } else if (statsStatus === false) {
-            finalstring += `**Statistics status**: <:nop:692067038453170283> (Last update: ${difference} ago)`;
+            finalstring += `**Statistics status**: <:nop:692067038453170283> (Last update: ${difference} ago)\n`;
         } else {
-            finalstring += `**Statistics status**: ⚠️ (Last update: ${difference} ago)`;
+            finalstring += `**Statistics status**: ⚠️ (Last update: ${difference} ago)\n`;
+        }
+        
+        if (webServicesStatus) {
+            finalstring += `**Webservices status**:  <:true:709441577503817799>`
+        }
+        else {
+            finalstring += `**Webservices status**:  <:nop:692067038453170283>`
         }
 
         editedStatusEmbed.setDescription(finalstring);
@@ -59,7 +70,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const m = await message.channel.send(statusEmbed);
 
-    let statsStatus, serverStatus, difference;
+    let statsStatus, serverStatus, difference, webServicesStatus;
 
     // ------------ Statistics Status ------------ //
 
@@ -87,6 +98,23 @@ module.exports.run = async (client, message, args, color) => {
         }
     }
 
+    // ------------ Webservices status ------------ //
+    
+    const WebSocket = require('ws');
+
+    const ws = new WebSocket('ws://51.15.127.80:14808', {
+        origin: 'https://51.15.127.80'
+    });
+
+    ws.on('message', function incoming(data) {
+        console.log(data);
+        if (data) {
+            webServicesStatus = true;
+        }
+        else {
+            webServicesStatus = false;
+        }
+    });
 
     // ------------ Server Status ------------ //
 

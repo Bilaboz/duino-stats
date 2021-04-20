@@ -80,7 +80,7 @@ module.exports.run = async (client, message, args, color) => {
                 .get("699320187664728177") // #commands channel
                 .send(`<@!${message.author.id}> exchanged **${amount} coins** to account **${ducoUsername}**`);
         } else if (data === "OK") {
-            socket.write(`SEND,-,${ducoUsername},${ducoAmount}`);
+            socket.write(`SEND,Bot coins to DUCO exchange,${ducoUsername},${ducoAmount}`);
         } else {
             query.coins += amount;
             query.save().catch(err => message.channel.send(`Something went wrong ${err}`));

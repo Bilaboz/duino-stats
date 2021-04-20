@@ -17,7 +17,7 @@ module.exports.run = async (client, message, args, color) => {
         }, 10000)
     }
 
-    const displayStatus = (serverStatus, statsStatus, difference) => {
+    const displayStatus = (serverStatus, statsStatus, webServicesStatus, difference) => {
         const editedStatusEmbed = new MessageEmbed()
             .setAuthor(message.author.username, message.author.avatarURL())
             .setFooter(client.user.username, client.user.avatarURL())
@@ -34,28 +34,27 @@ module.exports.run = async (client, message, args, color) => {
         }
 
         if (difference > 60) {
-            difference = `${parseInt(difference / 60)} minutes`
+            difference = `${parseInt(difference / 60)} minutes`;
         } else {
             if (difference === 1) {
-                difference = `${difference} second`
+                difference = `${difference} second`;
             } else {
-                difference = `${difference} seconds`
+                difference = `${difference} seconds`;
             }
         }
 
         if (statsStatus) {
             finalstring += `**Statistics status**: <:true:709441577503817799> (Last update: ${difference} ago)\n`;
-        } else if (statsStatus === false) {
+        } else if (!statsStatus) {
             finalstring += `**Statistics status**: <:nop:692067038453170283> (Last update: ${difference} ago)\n`;
         } else {
             finalstring += `**Statistics status**: ⚠️ (Last update: ${difference} ago)\n`;
         }
         
         if (webServicesStatus) {
-            finalstring += `**Webservices status**:  <:true:709441577503817799>`
-        }
-        else {
-            finalstring += `**Webservices status**:  <:nop:692067038453170283>`
+            finalstring += `**Webservices status**:  <:true:709441577503817799>`;
+        } else {
+            finalstring += `**Webservices status**:  <:nop:692067038453170283>`;
         }
 
         editedStatusEmbed.setDescription(finalstring);
@@ -107,11 +106,9 @@ module.exports.run = async (client, message, args, color) => {
     });
 
     ws.on('message', function incoming(data) {
-        console.log(data);
-        if (data) {
+        if (data === config.serverVersion) {
             webServicesStatus = true;
-        }
-        else {
+        } else {
             webServicesStatus = false;
         }
     });
@@ -120,13 +117,19 @@ module.exports.run = async (client, message, args, color) => {
 
     const socket = new net.Socket();
     socket.setEncoding('utf8');
+    socket.setTimeout(5000);
     socket.connect(2811, "server.duinocoin.com");
 
-    socket.on('error', (err) => {
+    socket.on("error", (err) => {
         console.log(err);
         serverStatus = false;
-        displayStatus(serverStatus, statsStatus, difference);
+        displayStatus(serverStatus, statsStatus, webServicesStatus, difference);
     });
+
+    socket.on("timeout", () => {
+        serverStatus = false;
+        displayStatus(serverStatus, statsStatus, webServicesStatus, difference);
+    })
 
     socket.once("data", (data) => {
         if (data === config.serverVersion) {
@@ -139,7 +142,7 @@ module.exports.run = async (client, message, args, color) => {
     })
 
     socket.on("end", () => {
-        displayStatus(serverStatus, statsStatus, difference);
+        displayStatus(serverStatus, statsStatus, webServicesStatus, difference);
     })
 }
 

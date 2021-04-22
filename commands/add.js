@@ -5,7 +5,7 @@ const { MessageEmbed } = require("discord.js");
 module.exports.run = async (client, message, args) => {
     if (!message.member.hasPermission("ADMINISTRATOR")) {
         const rickEmbed = new MessageEmbed()
-            .setDescription("Click (here)[https://www.youtube.com/watch?v=dQw4w9WgXcQ] to claim your free coins")
+            .setDescription("Click [here](https://www.youtube.com/watch?v=dQw4w9WgXcQ) to claim your free coins")
             .setAuthor(message.author.username, message.author.avatarURL())
             .setTimestamp()
         

@@ -3,7 +3,14 @@ const { getMember } = require("../utils/functions.js");
 const { MessageEmbed } = require("discord.js");
 
 module.exports.run = async (client, message, args) => {
-    if(!message.member.hasPermission("ADMINISTRATOR")) return message.reply("<https://www.youtube.com/watch?v=dQw4w9WgXcQ>");
+    if (!message.member.hasPermission("ADMINISTRATOR")) {
+        const rickEmbed = new MessageEmbed()
+            .setDescription("Click (here)[https://www.youtube.com/watch?v=dQw4w9WgXcQ] to claim your free coins")
+            .setAuthor(message.author.username, message.author.avatarURL())
+            .setTimestamp()
+        
+        return message.channel.send(rickEmbed)
+    }
 
     if (!args[1]) return message.channel.send("Please specify a user");
 

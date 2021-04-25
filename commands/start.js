@@ -52,7 +52,7 @@ module.exports.run = async (client, message) => {
         .addField(":clock9: Last Update", `${stats["Last update"]}`, true)
         .addField(":family_man_woman_boy:  Registered Users", stats["Registered users"], true)
         .addField(`<:Amusing:685522949905580055> Active Workers`, workersCount, true)
-        .addField(`<:Wallet2:811555717630001213> Estimated DUCO price`, `${stats["Duco price"]}$`, true)
+        .addField(`<:purple_duco_logo:832307025463607347> Estimated DUCO price`, `${stats["Duco price"]}$`, true)
         .addField(`:calendar: All time mined DUCO`, `${stats["All-time mined DUCO"]} ᕲ`, true)
         .addField(`:hash: Last block hash`, stats["Last block hash"], true)
         .addField(":link: Active connections", stats["Active connections"], true)

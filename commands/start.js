@@ -27,11 +27,11 @@ module.exports.run = async (client, message) => {
 
         let nodesPrice
         // const noderesponse = await axios.get(nodeapi);
-        if (!noderesponse.data) {
+        //if (!noderesponse.data) {
             nodesPrice = "error";
-        } else {
+        //} else {
             nodesPrice = noderesponse.data.value;
-        }
+        //}
 
         let workersCount;
         try {

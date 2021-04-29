@@ -36,7 +36,7 @@ module.exports.run = async (client, message, args, color) => {
     }
 
     let coinAmount = Math.floor((Math.random() * 30) + 65);
-    if (query.streak) coinAmount += query.streak * 0.5;
+    if (query.streak) coinAmount += query.streak * 1;
 
     let finalstring = `**${message.author.username}** you successfully claimed your daily reward!\nYou got **${coinAmount} bot coins** <:pepeclassy:701487042869329961>`;
 

@@ -100,11 +100,11 @@ module.exports.run = async (client, message, args, color) => {
 
     // ------------ Webservices status ------------ //
 
-    const ws = new WebSocket('ws://51.15.127.80:14808', {
+    const ws = new WebSocket('wss://server.duinocoin.com:15808', {
         origin: 'https://51.15.127.80'
     });
 
-    ws.on('message', function incoming(data) {
+    ws.on('message', (data) => {
         if (data === config.serverVersion) {
             webServicesStatus = true;
         } else {

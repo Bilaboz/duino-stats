@@ -26,7 +26,7 @@ module.exports.run = async (client, message) => {
         const stats = response.data;
 
         let nodesPrice
-        const noderesponse = await axios.get(nodeapi);
+        // const noderesponse = await axios.get(nodeapi);
         if (!noderesponse.data) {
             nodesPrice = "error";
         } else {

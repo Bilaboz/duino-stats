@@ -8,12 +8,12 @@ module.exports.run = async (client, message, args, color) => {
     const response = await axios.get(api);
     if (!response.data) return message.channel.send("Can't fetch the data, the API is probably down <:why:677964669532504094>");
     
-    const noderesponse = await axios.get(nodeapi);
-    if (!noderesponse.data) return message.channel.send("Can't fetch the node-s data, the API is probably down <:why:677964669532504094>");
+    //const noderesponse = await axios.get(nodeapi);
+    //if (!noderesponse.data) return message.channel.send("Can't fetch the node-s data, the API is probably down <:why:677964669532504094>");
 
     const price = response.data["Duco price"];
     const justswapprice = response.data["Duco JustSwap price"];
-    const nodeprice = noderesponse.data["value"];
+    const nodeprice = "error" //noderesponse.data["value"];
 
     const embed = new MessageEmbed()
         .setAuthor(message.author.username, message.author.avatarURL())

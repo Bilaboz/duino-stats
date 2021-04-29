@@ -1,9 +1,10 @@
 const net = require("net");
 const { MessageEmbed } = require("discord.js");
 const moment = require("moment");
-const config = require("../utils/config.json");
 const axios = require("axios");
+const WebSocket = require('ws');
 
+const config = require("../utils/config.json");
 let cooldown = new Set();
 
 module.exports.run = async (client, message, args, color) => {
@@ -98,8 +99,6 @@ module.exports.run = async (client, message, args, color) => {
     }
 
     // ------------ Webservices status ------------ //
-    
-    const WebSocket = require('ws');
 
     const ws = new WebSocket('ws://51.15.127.80:14808', {
         origin: 'https://51.15.127.80'

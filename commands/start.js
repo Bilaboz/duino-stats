@@ -30,7 +30,7 @@ module.exports.run = async (client, message) => {
         //if (!noderesponse.data) {
             nodesPrice = "error";
         //} else {
-            nodesPrice = noderesponse.data.value;
+            //nodesPrice = noderesponse.data.value;
         //}
 
         let workersCount;

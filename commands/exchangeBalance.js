@@ -20,7 +20,7 @@ module.exports.run = async (client, message, args, color) => {
             .setColor(color.pastelgreen)
 
         message.channel.send(embed);
-    } catch(err) { // very hacky but this command isn't really important
+    } catch (err) { // very hacky but this command isn't really important
         return message.channel.send(`Something went wrong...\n${err}`);
     }
 

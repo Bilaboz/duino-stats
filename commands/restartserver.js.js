@@ -16,7 +16,7 @@ module.exports.run = async (client, message, arg) => {
 }
 
 module.exports.config = {
-    name: "restart-serve",
+    name: "restart-server",
     aliases: ["server-restart"],
     usage: "",
     category: "moderation",

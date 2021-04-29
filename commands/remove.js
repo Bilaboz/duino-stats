@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Profile = require("../models/profile.js");
 const { getMember } = require("../utils/functions.js");
 

@@ -2,8 +2,8 @@ const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 const Profile = require("../models/profile.js");
 const moment = require("moment");
-const balanceApi = "http://51.15.127.80/balances.json";
-const transactionsApi = "http://51.15.127.80/transactions.json";
+const balanceApi = "https://server.duinocoin.com/balances.json";
+const transactionsApi = "https://server.duinocoin.com/transactions.json";
 
 let cooldown = new Set();
 let alreadyUsedTxid = new Set();
@@ -48,8 +48,11 @@ module.exports.run = async (client, message, args, color) => {
     msg.edit(embed);
     msg.reactions.removeAll();
 
-    const balanceApiResponse = await axios.get(balanceApi);
-    if (!balanceApiResponse.data) {
+    let balanceApiResponse;
+    try {
+        balanceApiResponse = await axios.get(balanceApi);
+    } catch (err) {
+        console.log(err);
         embed.setColor(color.red);
         embed.setDescription("`ERROR`: Impossible to fetch the balances API.");
         return msg.edit(embed);
@@ -118,8 +121,11 @@ module.exports.run = async (client, message, args, color) => {
     msg.edit(embed);
     msg.reactions.removeAll();
     
-    const transactionsList = await axios.get(transactionsApi);
-    if (!transactionsList.data) {
+    let transactionsList;
+    try {
+        transactionsList = await axios.get(transactionsApi);
+    } catch (err) {
+        console.log(err);
         embed.setColor(color.red);
         embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
         msg.edit(embed);
@@ -140,8 +146,11 @@ module.exports.run = async (client, message, args, color) => {
 
         await sleep(15000);
 
-        const transactionsList2 = await axios.get(transactionsApi);
-        if (!transactionsList2.data) {
+        let transactionsList2;
+        try {
+            transactionsList2 = await axios.get(transactionsApi);
+        } catch (err) {
+            console.log(err);
             embed.setColor(color.red);
             embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
             msg.edit(embed);

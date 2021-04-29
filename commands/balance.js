@@ -8,16 +8,26 @@ module.exports.run = async (client, message, args, color) => {
     const username = args[1]
     if (!username) return message.channel.send("Provide a username first");
 
-    const response = await axios.get(balancesApi);
-    if (!response.data) return message.channel.send("`ERROR` Can't fetch the balances!")
+    let balance;
+    try {
+        const response = await axios.get(balancesApi);
+        balance = parseFloat(response.data[username]);
+    } catch (err) {
+        console.log(err);
+        return message.channel.send("`ERROR` Can't fetch the balances!");
+    }
     
-    const balance = parseFloat(response.data[username]);
     if (!balance) return message.channel.send("This user doesn't exist or isn't listed in the API");
     
-    const responsePrice = await axios.get(priceApi);
-    if (!responsePrice.data) return message.channel.send("`ERROR` Can't fetch the price!");
-
-    const price = parseFloat(responsePrice.data["Duco price"]);
+    let price;
+    try {
+        const responsePrice = await axios.get(priceApi);
+        price = parseFloat(responsePrice.data["Duco price"]);
+    } catch (err) {
+        console.log(err);
+        return message.channel.send("`ERROR` Can't fetch the price!");
+    }
+    
     const balanceInUSD = balance * price;
 
     const embed = new MessageEmbed()

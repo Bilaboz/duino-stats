@@ -17,21 +17,23 @@ module.exports.run = async (client, message) => {
     const msg = await channel.send(tempEmbed);
 
     async function update() {
-        const response = await axios.get(api);
-        if (!response.data) {
+        let stats;
+        try {
+            const response = await axios.get(api);
+            stats = response.data;
+        } catch (err) {
+            console.log(err);
             tempEmbed.setDescription(`\`ERROR\`: Error while fetching the API\n\`${response.status} ${response.statusText}\``);
             return msg.edit(tempEmbed);
         }
-
-        const stats = response.data;
-
+        
         let nodesPrice
-        // const noderesponse = await axios.get(nodeapi);
-        //if (!noderesponse.data) {
+        try {
+            const noderesponse = await axios.get(nodeapi);
+            nodesPrice = noderesponse.data.value;
+        } catch (err) {
             nodesPrice = "error";
-        //} else {
-            //nodesPrice = noderesponse.data.value;
-        //}
+        }
 
         let workersCount;
         try {

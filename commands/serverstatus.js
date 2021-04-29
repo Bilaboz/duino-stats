@@ -74,28 +74,29 @@ module.exports.run = async (client, message, args, color) => {
 
     // ------------ Statistics Status ------------ //
 
-    const response = await axios.get("https://server.duinocoin.com/api.json");
-
-    if (!response.data) {
+    let response;
+    try {
+        response = await axios.get("https://server.duinocoin.com/api.json");
+    } catch (err) {
+        console.log(err);
         statsStatus = false;
-    } else {
-        const now = moment();
-        try {
-            let lastUpdate = response.data["Last update"].slice(0, -6);
-            lastUpdate = moment(lastUpdate, "DD/MM/YYYY hh:mm:ss");
+    }
 
-            difference = now.diff(lastUpdate, 'seconds');
-            
-            if (difference < 600) {
-                statsStatus = true;
-            } else if (difference < 1200) {
-                statsStatus = "partial";
-            } else {
-                statsStatus = false;
-            }
-        } catch {
+    try {
+        let lastUpdate = response.data["Last update"].slice(0, -6);
+        lastUpdate = moment(lastUpdate, "DD/MM/YYYY hh:mm:ss");
+
+        difference = now.diff(lastUpdate, 'seconds');
+        
+        if (difference < 600) {
+            statsStatus = true;
+        } else if (difference < 1200) {
+            statsStatus = "partial";
+        } else {
             statsStatus = false;
         }
+    } catch {
+        statsStatus = false;
     }
 
     // ------------ Webservices status ------------ //

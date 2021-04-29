@@ -104,9 +104,11 @@ module.exports.run = async (client, message, args, color) => {
     }
 
     if (args[1] === "duco") {
-        const response = await axios.get(api);
-
-        if (!response.data) {
+        let response;
+        try {
+            response = await axios.get(api);
+        } catch (err) {
+            console.log(err);
             return message.channel.send("Can't fetch the data, the API is probably down <:why:677964669532504094>");
         }
 

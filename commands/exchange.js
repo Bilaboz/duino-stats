@@ -1,7 +1,6 @@
 const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
 const net = require("net");
-const axios = require("axios");
 
 module.exports.run = async (client, message, args, color) => {
     const amount = parseInt(args[1]);

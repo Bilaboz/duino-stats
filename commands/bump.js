@@ -3,7 +3,7 @@ const Profile = require("../models/profile.js");
 module.exports.run = async (client, message, args) => {
     if (args[1] !== "bump") return;
 
-    const filter = m => m.embeds[0] && m.embeds[0].description && m.embeds[0].description.includes("👍");
+    const filter = m => m.embeds[0] && m.embeds[0].description && m.embeds[0].description.includes("done");
     const result = await message.channel.awaitMessages(filter, { max: 1, time: 15000, errors: ["time"] }).catch(() => {});
 
     if (!result) return;

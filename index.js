@@ -36,9 +36,11 @@ client.on("ready", () => {
 
         await g.members.fetch();
     })
-
-    console.log(`Successfully fetched invites`);
     console.log(`Successfully fetched members`);
+    console.log(`Successfully fetched invites`);
+
+    client.commands.get("start").run(client);
+    console.log("Started the statistics")
 })
 
 client.commands = new Discord.Collection();

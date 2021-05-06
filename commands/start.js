@@ -6,12 +6,14 @@ const api = "https://server.duinocoin.com/api.json"
 const nodeapi = "http://www.node-s.co.za/api/v1/duco/exchange_rate";
 
 module.exports.run = async (client, message) => {
-    if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send(":no_entry: You don't have the permission to do that !");
-
-    const m = await message.channel.send("Starting stats...");
+    let m;
+    if (message) {
+        if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send(":no_entry: You don't have the permission to do that !");
+        m = await message.channel.send("Starting stats...");
+    }
 
     const channel = client.channels.cache.get('691936892458893342');
-    await channel.messages.fetch({ limit: 3}).then(msgs => msgs.forEach(msg => msg.delete()));
+    await channel.messages.fetch({ limit: 3 }).then(msgs => msgs.forEach(msg => msg.delete()));
 
     const tempEmbed = new MessageEmbed().setDescription("Updating...");
     const msg = await channel.send(tempEmbed);
@@ -70,7 +72,7 @@ module.exports.run = async (client, message) => {
     update();
     timer = setInterval(update, 60*1000);
 
-    m.edit("Stats started!");
+    if (message) m.edit("Stats started!");
 }
 
 module.exports.config = {

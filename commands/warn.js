@@ -1,6 +1,8 @@
 const Incident = require("../models/incident.js");
 const moment = require("moment");
 const { MessageEmbed } = require("discord.js");
+
+const { logChannelID } = require("../utils/config.json");
 const { getMember } = require("../utils/functions.js");
 
 module.exports.run = async (client, message, args, color) => {
@@ -93,7 +95,7 @@ module.exports.run = async (client, message, args, color) => {
                 .setTimestamp()
             
             message.channel.send(warnEmbed);
-            client.channels.cache.get("699320187664728177").send(warnEmbed); // #commands channel
+            client.channels.cache.get(logChannelID).send(warnEmbed);
             msg.delete();
             message.delete();
         } else if (collected.first().emoji.name === "❌") {

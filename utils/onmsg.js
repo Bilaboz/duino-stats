@@ -4,6 +4,7 @@ const moment = require("moment");
 const Profile = require("../models/profile");
 const Incident = require("../models/incident");
 const Count = require("../models/count");
+const { logChannelID } = require("../utils/config.json");
 
 let cooldown = new Set();
 
@@ -62,7 +63,7 @@ module.exports.run = async (client, message, args, color) => {
 
         message.author.send(dmEmbed);
         message.channel.send(warnEmbed);
-        client.channels.cache.get("699320187664728177").send(warnEmbed); // #commands channel
+        client.channels.cache.get(logChannelID).send(warnEmbed);
         return message.delete();
     }
 

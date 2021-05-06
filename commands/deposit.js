@@ -1,7 +1,10 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
-const Profile = require("../models/profile.js");
 const moment = require("moment");
+
+const Profile = require("../models/profile.js");
+const { logChannelID } = require("../utils/config.json");
+
 const balanceApi = "https://server.duinocoin.com/balances.json";
 const transactionsApi = "https://server.duinocoin.com/transactions.json";
 
@@ -15,7 +18,7 @@ module.exports.run = async (client, message, args, color) => {
     if (ducoAmount < 1.5) return message.channel.send("The minimum amount of DUCO to deposit is 1.5");
 
     const coinAmount = parseInt((ducoAmount * 100) / 1.5);
-    const commandsChannel = client.channels.cache.get("699320187664728177") // #commands channel
+    const commandsChannel = client.channels.cache.get(logChannelID)
 
     const username = args[2];
     if (!username) return message.channel.send("Please specify your Duino-Coin username");

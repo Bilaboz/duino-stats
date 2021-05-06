@@ -1,4 +1,7 @@
 {
     "prefix": "!",
-    "serverVersion": "2.4"
+    "serverVersion": "2.4",
+
+    "logChannelID": "699320187664728177",
+    "statisticsChannelID": "691936892458893342"
 }

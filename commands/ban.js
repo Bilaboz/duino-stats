@@ -1,7 +1,9 @@
 const { MessageEmbed } = require("discord.js");
+const moment = require('moment-timezone');
+
 const Incident = require("../models/incident.js");
 const { getMember } = require("../utils/functions.js");
-const moment = require('moment-timezone');
+const { logChannelID } = require("../utils/config.json");
 
 module.exports.run = async (client, message, args, color) => {
     if (!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send(":no_entry: You dont't have the permission to do that !")
@@ -101,7 +103,7 @@ module.exports.run = async (client, message, args, color) => {
                 .setTimestamp()
             
             message.channel.send(banEmbed);
-            client.channels.cache.get("699320187664728177").send(banEmbed); // #commands channel
+            client.channels.cache.get(logChannelID).send(banEmbed);
             msg.delete();
             message.delete();
         } else if (collected.first().emoji.name === "❌") {

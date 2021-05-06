@@ -2,6 +2,7 @@ const { MessageEmbed } = require("discord.js");
 const color = require("../utils/color.json");
 const axios = require("axios");
 
+const { statisticsChannelID } = require("../utils/config.json");
 const api = "https://server.duinocoin.com/api.json"
 const nodeapi = "http://www.node-s.co.za/api/v1/duco/exchange_rate";
 
@@ -12,7 +13,7 @@ module.exports.run = async (client, message) => {
         m = await message.channel.send("Starting stats...");
     }
 
-    const channel = client.channels.cache.get('691936892458893342');
+    const channel = client.channels.cache.get(statisticsChannelID);
     await channel.messages.fetch({ limit: 3 }).then(msgs => msgs.forEach(msg => msg.delete()));
 
     const tempEmbed = new MessageEmbed().setDescription("Updating...");

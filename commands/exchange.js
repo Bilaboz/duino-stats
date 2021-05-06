@@ -2,6 +2,8 @@ const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
 const net = require("net");
 
+const { logChannelID } = require("../utils/config.json");
+
 module.exports.run = async (client, message, args, color) => {
     const amount = parseInt(args[1]);
     if (!amount) return message.channel.send("Please specify desired amount of bot coins to exchange");
@@ -76,7 +78,7 @@ module.exports.run = async (client, message, args, color) => {
             msg.edit(embed);
 
             client.channels.cache
-                .get("699320187664728177") // #commands channel
+                .get(logChannelID)
                 .send(`<@!${message.author.id}> exchanged **${amount} coins** to account **${ducoUsername}**`);
         } else if (data === "OK") {
             socket.write(`SEND,Bot coins to DUCO exchange,${ducoUsername},${ducoAmount}`);

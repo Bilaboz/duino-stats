@@ -4,7 +4,7 @@ const moment = require("moment");
 const Profile = require("../models/profile");
 const Incident = require("../models/incident");
 const Count = require("../models/count");
-const { logChannelID } = require("../utils/config.json");
+const { logChannelID, countingChannelID, suggestionChannelID, trueEmojiID, falseEmojiID } = require("../utils/config.json");
 
 let cooldown = new Set();
 
@@ -69,14 +69,14 @@ module.exports.run = async (client, message, args, color) => {
 
     //---------------------------Suggestions channel------------------------------//
 
-    if (message.channel.id == "677616731468070921") {
-        await message.react("704740848314613960");
-        return await message.react("692069337854378026");
+    if (message.channel.id == suggestionChannelID) {
+        await message.react(trueEmojiID);
+        return await message.react(falseEmojiID);
     }
 
     //---------------------------Counting------------------------------//
 
-    if (message.channel.id == "789855163393376276") {
+    if (message.channel.id == countingChannelID) {
 
         let lm = await message.channel.messages.fetch({ limit: 2 });
         lm = lm.last()

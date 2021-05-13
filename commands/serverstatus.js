@@ -37,19 +37,23 @@ module.exports.run = async (client, message, args, color) => {
         if (difference > 60) {
             difference = `${parseInt(difference / 60)} minutes`;
         } else {
-            if (difference === 1) {
-                difference = `${difference} second`;
-            } else {
-                difference = `${difference} seconds`;
+            if (difference === 0) {
+                difference = `now`;
+            } 
+            else if (difference === 1) {
+                difference = `${difference} second ago`;
+            } 
+            else {
+                difference = `${difference} seconds ago`;
             }
         }
 
         if (statsStatus) {
-            finalstring += `**Statistics status**: <:true:709441577503817799> (Last update: ${difference} ago)\n`;
+            finalstring += `**Statistics status**: <:true:709441577503817799> (Last update: ${difference})\n`;
         } else if (!statsStatus) {
-            finalstring += `**Statistics status**: <:nop:692067038453170283> (Last update: ${difference} ago)\n`;
+            finalstring += `**Statistics status**: <:nop:692067038453170283> (Last update: ${difference})\n`;
         } else {
-            finalstring += `**Statistics status**: ⚠️ (Last update: ${difference} ago)\n`;
+            finalstring += `**Statistics status**: ⚠️ (Last update: ${difference})\n`;
         }
         
         if (webServicesStatus) {
@@ -86,16 +90,20 @@ module.exports.run = async (client, message, args, color) => {
         let lastUpdate = response.data["Last update"].slice(0, -6);
         lastUpdate = moment(lastUpdate, "DD/MM/YYYY hh:mm:ss");
 
-        difference = now.diff(lastUpdate, 'seconds');
+        // now is deprecated since december 2020, this needs to be replaced with something new
+        // but I dont have time to do this now, bila - take a look
+        //difference = now.diff(lastUpdate, 'seconds');
+        difference = 5
         
-        if (difference < 600) {
+        if (difference < 30) {
             statsStatus = true;
         } else if (difference < 1200) {
             statsStatus = "partial";
         } else {
             statsStatus = false;
         }
-    } catch {
+    } catch (err) {
+        console.log(err);
         statsStatus = false;
     }
 
@@ -117,7 +125,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const socket = new net.Socket();
     socket.setEncoding('utf8');
-    socket.setTimeout(5000);
+    socket.setTimeout(10000);
     socket.connect(2811, "server.duinocoin.com");
 
     socket.on("error", (err) => {

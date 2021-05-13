@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-const balancesApi = "https://server.duinocoin.com/balances.json";
+const balancesApi = "https://server.duinocoin.com:5000/balances/";
 const priceApi = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
@@ -10,11 +10,11 @@ module.exports.run = async (client, message, args, color) => {
 
     let balance;
     try {
-        const response = await axios.get(balancesApi);
-        balance = parseFloat(response.data[username]);
+        const response = await axios.get(balancesApi + username);
+        balance = parseFloat(response.data["balance"]);
     } catch (err) {
         console.log(err);
-        return message.channel.send("`ERROR` Can't fetch the balances!");
+        return message.channel.send("`ERROR` Can't fetch the balances: " + err);
     }
     
     if (!balance) return message.channel.send("This user doesn't exist or isn't listed in the API");

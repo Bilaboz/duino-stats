@@ -39,8 +39,10 @@ client.on("ready", () => {
     console.log(`Successfully fetched members`);
     console.log(`Successfully fetched invites`);
 
-    client.commands.get("start").run(client);
-    console.log("Started the statistics")
+    if (process.env.NODE_ENV !== "dev") {
+        client.commands.get("start").run(client);
+        console.log("Started the statistics");
+    }
 })
 
 client.commands = new Discord.Collection();

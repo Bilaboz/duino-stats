@@ -11,13 +11,18 @@ module.exports.run = async (client, message, args, color) => {
     let balance;
     try {
         const response = await axios.get(balancesApi + username);
-        balance = parseFloat(response.data["balance"]);
+        console.log(response)
+        balance = parseFloat(response.data.result["balance"]);
     } catch (err) {
+        if (err.response.status === 400) {
+            return message.channel.send("This user doesn't exist");
+        }
+        
         console.log(err);
         return message.channel.send("`ERROR` Can't fetch the balances: " + err);
     }
     
-    if (!balance) return message.channel.send("This user doesn't exist or isn't listed in the API");
+    if (!balance) return message.channel.send("This user doesn't exist");
     
     let price;
     try {

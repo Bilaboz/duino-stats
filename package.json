@@ -13,7 +13,8 @@
     "mongoose": "^5.11.15"
   },
   "scripts": {
-    "run": "node index"
+    "run": "node index",
+    "dev": "NODE_ENV=dev node index"
   },
   "repository": {
     "type": "git",

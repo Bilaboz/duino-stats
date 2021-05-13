@@ -1,6 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
-const moment = require("moment");
+const dayjs = require("dayjs");
+const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 const Profile = require("../models/profile.js");
 const { logChannelID } = require("../utils/config.json");
@@ -10,6 +11,7 @@ const transactionsApi = "https://server.duinocoin.com/transactions.json";
 
 let cooldown = new Set();
 let alreadyUsedTxid = new Set();
+dayjs.extend(customParseFormat);
 
 module.exports.run = async (client, message, args, color) => {
     const ducoAmount = parseFloat(args[1]);
@@ -78,7 +80,7 @@ module.exports.run = async (client, message, args, color) => {
         }, 600000)
     }
 
-    const before = moment();
+    const before = dayjs();
 
     embed.setDescription(`**${message.author.username}**, please send exactly \`${ducoAmount}\` DUCO to \`coinexchange\`
                         You have \`6 minutes\` to send the funds
@@ -171,7 +173,7 @@ module.exports.run = async (client, message, args, color) => {
         }
     }
 
-    const txDate = moment(`${tx.Date} ${tx.Time}`, "DD/MM/YYYY hh:mm:ss");
+    const txDate = dayjs(`${tx.Date} ${tx.Time}`, "DD/MM/YYYY hh:mm:ss");
 
     console.log(message.author.username)
     console.log(tx.Sender == username);

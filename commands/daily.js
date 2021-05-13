@@ -1,10 +1,10 @@
 const Profile = require("../models/profile.js");
-const moment = require("moment");
+const dayjs = require("dayjs");
 const { MessageEmbed } = require("discord.js");
 
 module.exports.run = async (client, message, args, color) => {
 
-    const now = moment();
+    const now = dayjs();
 
     const dailyEmbed = new MessageEmbed()
         .setAuthor(message.author.username, message.author.avatarURL())
@@ -41,7 +41,7 @@ module.exports.run = async (client, message, args, color) => {
     let finalstring = `**${message.author.username}** you successfully claimed your daily reward!\nYou got **${coinAmount} bot coins** <:pepeclassy:701487042869329961>`;
 
     if (query.lastClaim) {
-        const lastClaim = moment.unix(query.lastClaim);
+        const lastClaim = dayjs.unix(query.lastClaim);
         const difference = now.diff(lastClaim, "hours");
 
         if (difference >= 24) {

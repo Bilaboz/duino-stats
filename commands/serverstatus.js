@@ -1,10 +1,12 @@
 const net = require("net");
 const { MessageEmbed } = require("discord.js");
-const moment = require("moment");
+const dayjs = require("dayjs");
+const customParseFormat = require('dayjs/plugin/customParseFormat');
 const axios = require("axios");
 const WebSocket = require('ws');
 
 const config = require("../utils/config.json");
+dayjs.extend(customParseFormat);
 let cooldown = new Set();
 
 module.exports.run = async (client, message, args, color) => {
@@ -88,12 +90,10 @@ module.exports.run = async (client, message, args, color) => {
 
     try {
         let lastUpdate = response.data["Last update"].slice(0, -6);
-        lastUpdate = moment(lastUpdate, "DD/MM/YYYY hh:mm:ss");
+        lastUpdate = dayjs(lastUpdate, "DD/MM/YYYY hh:mm:ss");
 
-        // now is deprecated since december 2020, this needs to be replaced with something new
-        // but I dont have time to do this now, bila - take a look
-        //difference = now.diff(lastUpdate, 'seconds');
-        difference = 5
+        const now = dayjs()
+        difference = now.diff(lastUpdate, 'seconds');
         
         if (difference < 30) {
             statsStatus = true;

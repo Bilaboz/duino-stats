@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const moment = require("moment");
+const dayjs = require("dayjs");
 
 const Profile = require("../models/profile");
 const Incident = require("../models/incident");
@@ -7,12 +7,14 @@ const Count = require("../models/count");
 const { logChannelID, countingChannelID, suggestionChannelID, trueEmojiID, falseEmojiID } = require("../utils/config.json");
 
 let cooldown = new Set();
+dayjs.extend(require('dayjs/plugin/utc'));
+dayjs.extend(require('dayjs/plugin/timezone'));
 
 module.exports.run = async (client, message, args, color) => {
 
     //---------------------------Invite detection------------------------------//
 
-    const date = moment().tz("Europe/Paris").format('LLL');
+    const date = dayjs().tz("Europe/Paris").format('LLL');
     if (message.content.toLowerCase().includes("discord.gg" || "discordapp.com/invite") && !message.member.hasPermission("ADMINISTRATOR")) {
         Incident.findOne({
             userID: message.author.id

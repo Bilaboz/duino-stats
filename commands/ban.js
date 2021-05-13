@@ -1,9 +1,12 @@
 const { MessageEmbed } = require("discord.js");
-const moment = require('moment-timezone');
+const dayjs = require("dayjs");
 
 const Incident = require("../models/incident.js");
 const { getMember } = require("../utils/functions.js");
 const { logChannelID } = require("../utils/config.json");
+
+dayjs.extend(require('dayjs/plugin/utc'));
+dayjs.extend(require('dayjs/plugin/timezone'));
 
 module.exports.run = async (client, message, args, color) => {
     if (!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send(":no_entry: You dont't have the permission to do that !")
@@ -28,7 +31,7 @@ module.exports.run = async (client, message, args, color) => {
         .setFooter("Automatically canceled after 30 seconds")
         .setColor(color.orange)
 
-    const date = moment().tz("Europe/Paris").format('LLL');
+    const date = dayjs().tz("Europe/Paris").format('LLL');
 
     const dmEmbed = new MessageEmbed()
         .setTitle("You have been banned from Duino-Coin!")

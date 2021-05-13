@@ -6,9 +6,9 @@
   "dependencies": {
     "@vitalets/google-translate-api": "^5.0.0",
     "axios": "^0.21.1",
+    "dayjs": "^1.10.4",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "mongoose": "^5.11.15"
   },

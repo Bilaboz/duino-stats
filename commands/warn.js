@@ -1,9 +1,12 @@
 const Incident = require("../models/incident.js");
-const moment = require("moment");
+const dayjs = require("dayjs");
 const { MessageEmbed } = require("discord.js");
 
 const { logChannelID } = require("../utils/config.json");
 const { getMember } = require("../utils/functions.js");
+
+dayjs.extend(require('dayjs/plugin/utc'));
+dayjs.extend(require('dayjs/plugin/timezone'));
 
 module.exports.run = async (client, message, args, color) => {
 
@@ -21,7 +24,7 @@ module.exports.run = async (client, message, args, color) => {
     let reason = args.slice(2).join(" ");
     if (!reason) reason = "No reason specified";
 
-    const date = moment().tz("Europe/Paris").format('LLL');
+    const date = dayjs().tz("Europe/Paris").format('LLL');
 
     const promptEmbed = new MessageEmbed()
         .setAuthor(`Are you sure that you want to warn ${tUser.username}?`)

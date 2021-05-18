@@ -29,33 +29,45 @@ module.exports.run = async (client, message, args, color) => {
     const obfuToRetype = `\`${toRetype.split(" ").join("\uFEFF ")}\``
     message.channel.send(`**🎉 Fast type event hosted by ${message.author.username}! 🎉**\n\nBe the first to retype the following sentence to win **${coinsAmount} coins**\nType: \`${obfuToRetype}\`\n*Copy paste will not work*`)
 
-    const filter = m => m.content == toRetype && m.author.id != message.author.id;
-    message.channel.awaitMessages(filter, { max: 1, time: 60000, errors: ["time"] }).then(async collected => {
-        const winner = collected.first().author;
-        message.channel.send(`**${winner.username}** answered first!\nThey won **${coinsAmount} coins!** <:pepeclassy:701487042869329961>`);
+    const filter = m => m.author.id !== message.author.id && !m.author.bot;
+    const collector = message.channel.createMessageCollector(filter, { time: 60000 });
 
-        const winnerProfile = await Profile.findOne({ userID: winner.id, guildID: message.guild.id})
-        if (!winnerProfile) {
-            const newProfile = new Profile({
-                username: winner.username,
-                userID: winner.id,
-                guildID: message.guild.id,
-                coins: coinsAmount,
-                bumps: "0",
-                xp: 0,
-                level: 1
-            })
-            newProfile.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-        } else {
-            winnerProfile.coins += coinsAmount;
-            winnerProfile.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+    collector.on("collect", async (m) => {
+        if (m.content === toRetype.split(" ").join("\uFEFF ")) {
+            m.reply("No copy paste!");
+        } else if (m.content === toRetype) {
+            const winner = m.author;
+            message.channel.send(`**${winner.username}** answered first!\nThey won **${coinsAmount} coins!** <:pepeclassy:701487042869329961>`);
 
-            authorProfile.coins -= coinsAmount;
-            authorProfile.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+            const winnerProfile = await Profile.findOne({ userID: winner.id, guildID: message.guild.id})
+            if (!winnerProfile) {
+                const newProfile = new Profile({
+                    username: winner.username,
+                    userID: winner.id,
+                    guildID: message.guild.id,
+                    coins: coinsAmount,
+                    bumps: "0",
+                    xp: 0,
+                    level: 1
+                })
+                newProfile.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+            } else {
+                winnerProfile.coins += coinsAmount;
+                winnerProfile.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+
+                authorProfile.coins -= coinsAmount;
+                authorProfile.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+            }
+            collector.stop();
         }
-    }).catch(() => message.channel.send("Nobody answered, *sad*"))
+    });
 
-
+    collector.on("end", () => {
+        const resultFilter = m => m.content === toRetype;
+        if (!collector.collected.find(resultFilter)) {
+            message.channel.send("Nobody answered, *sad*");
+        }
+    })
 }
 
 module.exports.config = {

@@ -12,7 +12,7 @@ module.exports.run = async (client, message, args, color) => {
     const ducoUsername = args[2];
     if (!ducoUsername) return message.channel.send("Please specify your Duino-Coin username");
 
-    const ducoAmount = amount * 0.015;
+    const ducoAmount = Math.round(amount) / 100;
 
     const query = await Profile.findOne({ userID: message.author.id, guildID: message.guild.id });
 
@@ -46,7 +46,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const embed = new MessageEmbed()
         .setColor(color.orange)
-        .setDescription("Exchanging in progress - this may take a few seconds...")
+        .setDescription("**Exchanging in progress** - this will take a minute at most...")
         .setTimestamp()
         .setAuthor(message.author.username, message.author.avatarURL())
         .setFooter(client.user.username, client.user.avatarURL())
@@ -55,7 +55,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const socket = new net.Socket();
     socket.setEncoding('utf8');
-    socket.connect(2811, "server.duinocoin.com");
+    socket.connect(2809, "127.0.0.1");
 
     socket.on("error", (error) => {
         console.log("socket error in exchange command: " + error);

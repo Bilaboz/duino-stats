@@ -6,8 +6,8 @@ const customParseFormat = require('dayjs/plugin/customParseFormat');
 const Profile = require("../models/profile.js");
 const { logChannelID } = require("../utils/config.json");
 
-const balanceApi = "https://server.duinocoin.com/balances.json";
-const transactionsApi = "https://server.duinocoin.com/transactions.json";
+const balanceApi = "https://server.duinocoin.com/balances/";
+const transactionsApi = "https://server.duinocoin.com/transactions/";
 
 let cooldown = new Set();
 let alreadyUsedTxid = new Set();
@@ -17,9 +17,9 @@ module.exports.run = async (client, message, args, color) => {
     const ducoAmount = parseFloat(args[1]);
     if (!ducoAmount) return message.channel.send("Please specify a number of DUCO to deposit");
     if (ducoAmount <= 0) return message.channel.send("Please specify a positive number of DUCO to deposit");
-    if (ducoAmount < 1.5) return message.channel.send("The minimum amount of DUCO to deposit is 1.5");
+    if (ducoAmount < 1) return message.channel.send("The minimum amount of DUCO to deposit is 1");
 
-    const coinAmount = parseInt((ducoAmount * 100) / 1.5);
+    const coinAmount = parseInt(ducoAmount * 100);
     const commandsChannel = client.channels.cache.get(logChannelID)
 
     const username = args[2];
@@ -55,7 +55,7 @@ module.exports.run = async (client, message, args, color) => {
 
     let balanceApiResponse;
     try {
-        balanceApiResponse = await axios.get(balanceApi);
+        balanceApiResponse = await axios.get(balanceApi + username);
     } catch (err) {
         console.log(err);
         embed.setColor(color.red);
@@ -63,7 +63,7 @@ module.exports.run = async (client, message, args, color) => {
         return msg.edit(embed);
     }
 
-    const ducoBalance = parseFloat(balanceApiResponse.data[username]);
+    const ducoBalance = parseFloat(balanceApiResponse.data.result.balance);
     if (!ducoBalance || ducoBalance < ducoAmount) {
         embed.setColor(color.red);
         embed.setDescription(`\`ERROR\`: The specifed username isn't listed in the API or doesn't have enough balance to exchange ${ducoAmount} <:duco:807188450393980958>`);
@@ -126,18 +126,18 @@ module.exports.run = async (client, message, args, color) => {
     msg.edit(embed);
     msg.reactions.removeAll();
     
-    let transactionsList;
+    let tx;
     try {
-        transactionsList = await axios.get(transactionsApi);
+        tx = await axios.get(transactionsApi + txid);
     } catch (err) {
         console.log(err);
         embed.setColor(color.red);
-        embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
+        embed.setDescription("`ERROR`: Impossible to fetch the transactions API.\nIf you already sent the funds, please contact an administrator to get refunded");
         msg.edit(embed);
         return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
     }
 
-    let tx = transactionsList.data[txid];
+    tx = tx.data.result;
     if (!tx) {
         embed.setColor(color.orange);
         embed.setDescription(`\`ERROR\`: Impossible to find the transaction
@@ -151,18 +151,18 @@ module.exports.run = async (client, message, args, color) => {
 
         await sleep(15000);
 
-        let transactionsList2;
+        let tx2;
         try {
-            transactionsList2 = await axios.get(transactionsApi);
+            tx2 = await axios.get(transactionsApi + txid);
         } catch (err) {
             console.log(err);
             embed.setColor(color.red);
-            embed.setDescription("`ERROR`: Impossible to fetch the transactions list.\nIf you already sent the funds, please contact an administrator to get refunded");
+            embed.setDescription("`ERROR`: Impossible to fetch the transactions API.\nIf you already sent the funds, please contact an administrator to get refunded");
             msg.edit(embed);
             return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
         }
 
-        tx = transactionsList2.data[txid];
+        tx2 = tx2.data.result;
         if (!tx) {
             embed.setColor(color.red);
             embed.setDescription(`\`ERROR\`: Impossible to find the transaction
@@ -173,19 +173,19 @@ module.exports.run = async (client, message, args, color) => {
         }
     }
 
-    const txDate = dayjs(`${tx.Date} ${tx.Time}`, "DD/MM/YYYY hh:mm:ss");
+    const txDate = dayjs(tx.datetime, "DD/MM/YYYY hh:mm:ss");
 
     console.log(message.author.username)
-    console.log(tx.Sender == username);
-    console.log(tx.Recipient == "coinexchange");
-    console.log(tx.Amount == ducoAmount);
+    console.log(tx.sendeer == username);
+    console.log(tx.recipient == "coinexchange");
+    console.log(tx.amount == ducoAmount);
     console.log(before.diff(txDate, "minutes") < 6);
     console.log(!(alreadyUsedTxid.has(txid)));
 
     if (
-        (tx.Sender == username) &&
-        (tx.Recipient == "coinexchange") &&
-        (tx.Amount == ducoAmount) &&
+        (tx.sender == username) &&
+        (tx.recipient == "coinexchange") &&
+        (tx.amount == ducoAmount) &&
         (before.diff(txDate, "minutes") < 6) &&
         !(alreadyUsedTxid.has(txid))
         ) {

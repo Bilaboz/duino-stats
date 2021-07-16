@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-const balancesApi = "https://server.duinocoin.com:5000/balances/";
+const balancesApi = "https://server.duinocoin.com/balances/";
 const priceApi = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
@@ -11,8 +11,7 @@ module.exports.run = async (client, message, args, color) => {
     let balance;
     try {
         const response = await axios.get(balancesApi + username);
-        console.log(response)
-        balance = parseFloat(response.data.result["balance"]);
+        balance = parseFloat(response.data.result.balance);
     } catch (err) {
         if (err.response.status === 400) {
             return message.channel.send("This user doesn't exist");

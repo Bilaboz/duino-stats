@@ -273,7 +273,7 @@ module.exports.run = async (client, message, args, color) => {
         socket_esp.end();
     });
 
-    socket_espsp.once("data", () => {
+    socket_esp.once("data", () => {
         ESPserverStatus = true;
         socket_esp.end();
     });

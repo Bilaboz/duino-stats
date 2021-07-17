@@ -135,12 +135,10 @@ module.exports.run = async (client, message, args, color) => {
 
         ws.on("message", () => {
             webServicesStatus = true;
-            ws.end();
         });
 
         ws.on("timeout", () => {
             webServicesStatus = false;
-            ws.end();
         });
 
         ws.on("error", () => {
@@ -162,7 +160,6 @@ module.exports.run = async (client, message, args, color) => {
 
         ws2.on("timeout", () => {
             webminerProxy = false;
-            ws2.end();
         });
 
         ws2.on("error", () => {

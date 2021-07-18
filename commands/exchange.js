@@ -11,6 +11,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const ducoUsername = args[2];
     if (!ducoUsername) return message.channel.send("Please specify your Duino-Coin username");
+    if (ducoUsername.includes(",")) return message.channel.send("Please send a valid Duino-Coin username");
 
     const ducoAmount = Math.round(amount) / 100;
 

@@ -113,7 +113,7 @@ module.exports.run = async (client, message, args, color) => {
         return commandsChannel.send(`<@!${message.author.id}> deposit failed\n${message.url}`);
     }
 
-    if (!/^[0-9a-z]{40}$/.test(msgCollected.first().content)) {
+    if ((!/^[0-9a-z]{40}$/.test(msgCollected.first().content)) && (!/^[0-9a-z]{16}$/.test(msgCollected.first().content))) {
         embed.setColor(color.red);
         embed.setDescription("`ERROR`: The transaction ID that you sent is invalid\nIf you already sent the funds, please contact an administrator to get refunded");
         msg.edit(embed);

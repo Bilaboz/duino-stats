@@ -11,7 +11,9 @@ module.exports.run = async (client, message, args, color) => {
     let balance;
     try {
         const response = await axios.get(balancesApi + username);
-        balance = parseFloat(response.data.result.balance);
+        balance = parseFloat(response.data.result);
+        
+        if (!balance) return message.channel.send("This user doesn't exist");
     } catch (err) {
         console.log(err);
         return message.channel.send("`ERROR` Can't fetch the balances: " + err);

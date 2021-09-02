@@ -79,6 +79,10 @@ client.on("message", async (message) => {
     if (message.mentions.has(client.user)) {
         if (message.mentions.everyone) return;
 
+        if (message.content.includes("svkobot")) {
+            return message.reply("svkobot my love");
+        }
+
         const reply = replies[Math.floor(Math.random() * replies.length)];
         message.reply(reply);
     }

@@ -34,7 +34,12 @@ module.exports.run = async (client, message, args, color) => {
         dailyEmbed.setDescription(`**${message.author.username}** you successfully claimed your daily reward!\nYou got **100 bot coins** <:pepeclassy:701487042869329961>`);
         return message.channel.send(dailyEmbed);
     }
-
+    
+    if (query.level <= 1) {
+        dailyEmbed.setDescription(`**${message.author.username}** you dont have a high enough level to do that`);
+        return message.channel.send(dailyEmbed);
+    }
+    
     let coinAmount = Math.floor((Math.random() * 30) + 65);
     if (query.streak) coinAmount += query.streak * 1;
 

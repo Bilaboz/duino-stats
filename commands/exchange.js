@@ -1,6 +1,7 @@
 const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
 const net = require("net");
+const axios = require("axios");
 
 const { logChannelID } = require("../utils/config.json");
 
@@ -54,54 +55,46 @@ module.exports.run = async (client, message, args, color) => {
 
     const msg = await message.channel.send(embed);
 
-    const socket = new net.Socket();
-    socket.setEncoding('utf8');
-    socket.connect(2809, "127.0.0.1");
-
-    socket.on("error", (error) => {
-        console.log("socket error in exchange command: " + error);
-        query.coins += amount;
-        query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-
-        message.reply(`An error occured while exchanging your coins: ${error}`);
-    })
-
-    socket.on("data", (data) => {
-        if (data.startsWith("2")) {
-            socket.write(`LOGI,coinexchange,${process.env.coinexchangePassword}`);
-        } else if (data.includes("Successfully")) {
-            const txid = data.split(",")[2];
+    let send_url = `https://server.duinocoin.com/transaction/`
+                    + `?username=coinexchange`
+                    + `&password=` + encodeURIComponent(process.env.coinexchangePassword)
+                    + `&recipient=` + encodeURIComponent(ducoUsername)
+                    + `&amount=` + encodeURIComponent(ducoAmount)
+                    + `&memo=Bot coins to DUCO exchange`
+    
+    try {
+        let response = await axios.get(send_url);
+        response = response.data;
+        if (response["success"] == true) {
+            let txid = response["result"].split(",")[2];
 
             embed.setColor(color.green)
             embed.setDescription(`Successfully exchanged **${amount} coins** to **${ducoAmount} DUCO** and sent to **${ducoUsername}**
-                                [View transaction in the explorer](https://explorer.duinocoin.com?search=${txid})`)
-
+                                 [View transaction in the explorer](https://explorer.duinocoin.com?search=${txid})`)
             msg.edit(embed);
 
             client.channels.cache
                 .get(logChannelID)
                 .send(`<@!${message.author.id}> exchanged **${amount} coins** to account **${ducoUsername}**`);
-        } else if (data === "OK") {
-            socket.write(`SEND,Bot coins to DUCO exchange,${ducoUsername},${ducoAmount}`);
-        } else {
+        }
+        else {
             query.coins += amount;
             query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-
-            embed.setColor(color.red)
-
-            try {
-                const error = data.split(",")[1];
-
-                embed.setDescription(`Error exchanging **${amount}** coins\n${error}`);
-
-                msg.edit(embed);
-            } catch (err) {
-                embed.setDescription(`Error exchanging **${amount}** coins\n${err}`);
-
-                msg.edit(embed);
-            }
+            
+            let err_msg = response["message"].split(",")[1];
+            
+            embed.setDescription(`Error 2 exchanging **${amount}** coins\n${err_msg}`);
+            msg.edit(embed);
         }
-    })
+    } catch (err) {
+        console.log(err);
+        
+        query.coins += amount;
+        query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+        
+        embed.setDescription(`Error exchanging **${amount}** coins\n${err}`);
+        msg.edit(embed);
+    }
 }
     
 

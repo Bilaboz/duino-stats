@@ -38,15 +38,6 @@ module.exports.run = async (client, message) => {
             nodesPrice = "error";
         }
 
-        let workersCount;
-        try {
-            workersCount = Object.keys(stats["Active workers"]).length;
-        } catch (err) {
-            console.log(`Statistics update error: ${err}`);
-            workersCount = "error";
-        }
-        
-
         const embed = new MessageEmbed()
         .setColor(color.yellow)
         .setTitle("Duino-Coin Statistics")
@@ -56,7 +47,7 @@ module.exports.run = async (client, message) => {
         .addField(":bricks: Mined Blocks", stats["Mined blocks"], true)
         .addField(":clock9: Last Update", `${stats["Last update"]}`, true)
         .addField(":family_man_woman_boy:  Registered Users", stats["Registered users"], true)
-        .addField(`<:Amusing:685522949905580055> Active Workers`, workersCount, true)
+        .addField(`<:Amusing:685522949905580055> Active Workers`, stats["Miner distribution"]["All"], true)
         .addField(`<:purple_duco_logo:832307025463607347> Estimated DUCO price`, `${stats["Duco price"]}$`, true)
         .addField(`:calendar: All time mined DUCO`, `${stats["All-time mined DUCO"]} ᕲ`, true)
         .addField(`:hash: Last block hash`, stats["Last block hash"], true)

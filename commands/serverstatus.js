@@ -25,7 +25,7 @@ module.exports.run =
       (serverStatus, AVRserverStatus, ESPserverStatus, walletServerStatus,
        statsStatus, webServicesStatus, PCserverStatus, PC2serverStatus,
        pulseStatus, PC3serverStatus, webminerProxy, starStatus, beyondStatus,
-       difference) => {
+       svkostatus, difference) => {
         const editedStatusEmbed =
             new MessageEmbed()
                 .setAuthor(message.author.username, message.author.avatarURL())
@@ -35,7 +35,7 @@ module.exports.run =
         let finalstring = 'Status check results:\n'
 
         finalstring +=
-            ' :point_right: [Master server](https://explorer.duinocoin.com):\n'
+            ' :point_right: Master server:\n'
 
         if (serverStatus) finalstring +=
             '2811: **General purpose port**: <:true:709441577503817799>\n';
@@ -63,7 +63,7 @@ module.exports.run =
         finalstring += 'Worker limit: **Mining disabled**\n';
 
         finalstring +=
-            ' :point_right: [PulsePool](http://149.91.88.18:6001):\n';
+            ' :point_right: PulsePool:\n';
 
         if (pulseStatus)
           finalstring +=
@@ -71,22 +71,32 @@ module.exports.run =
         else
           finalstring += `5999: **General mining port**: ⚠️ (timeout)\n`;
 
-        finalstring += 'Worker limit: **150 miners**\n';
+        finalstring += 'Worker limit: **50 miners**\n';
 
         finalstring +=
-            ' :point_right: [StarPool](http://51.158.182.90:6001):\n';
+            ' :point_right: StarPool:\n';
 
         if (starStatus)
+          finalstring +=
+              `6006: **General mining port**:  <:true:709441577503817799>\n`;
+        else
+          finalstring += `6006: **General mining port**: ⚠️ (timeout)\n`;
+
+        finalstring += 'Worker limit: **50 miners**\n';
+
+        finalstring += ' :point_right: BeyondPool:\n';
+
+        if (beyondStatus)
           finalstring +=
               `6000: **General mining port**:  <:true:709441577503817799>\n`;
         else
           finalstring += `6000: **General mining port**: ⚠️ (timeout)\n`;
 
-        finalstring += 'Worker limit: **150 miners**\n';
+        finalstring += 'Worker limit: **50 miners**\n';
 
-        finalstring += ' :point_right: [BeyondPool](https://beyondpool.io):\n';
+        finalstring += ' :point_right: SvkoPool:\n';
 
-        if (beyondStatus)
+        if (svkostatus)
           finalstring +=
               `6000: **General mining port**:  <:true:709441577503817799>\n`;
         else
@@ -148,7 +158,7 @@ module.exports.run =
   let statsStatus, serverStatus, walletServerStatus, AVRserverStatus,
       ESPserverStatus, difference, webServicesStatus, PCserverStatus,
       PC2serverStatus, pulseStatus, PC3serverStatus, webminerProxy, starStatus,
-      beyondStatus;
+      svkostatus, beyondStatus;
 
   // ------------ Statistics Status ------------ //
 
@@ -353,7 +363,7 @@ module.exports.run =
   const socket_p = new net.Socket();
   socket_p.setEncoding('utf8');
   socket_p.setTimeout(timeout);
-  socket_p.connect(1612, '149.91.88.18');
+  socket_p.connect(1224, '149.91.88.18');
 
   socket_p.on('error', () => {
     pulseStatus = false;
@@ -374,7 +384,7 @@ module.exports.run =
   const socket_star = new net.Socket();
   socket_star.setEncoding('utf8');
   socket_star.setTimeout(timeout);
-  socket_star.connect(6000, '51.158.182.90');
+  socket_star.connect(6006, '51.158.182.90');
 
   socket_star.on('error', () => {
     starStatus = false;
@@ -411,12 +421,33 @@ module.exports.run =
     socket_beyond.end();
   })
 
+  // ------------ Beyond pool status ------------ //
+
+  const socket_svko = new net.Socket();
+  socket_svko.setEncoding('utf8');
+  socket_svko.setTimeout(timeout);
+  socket_svko.connect(6000, '5.230.69.132');
+
+  socket_svko.on('error', () => {
+    svkostatus = false;
+  });
+
+  socket_svko.on('timeout', () => {
+    svkostatus = false;
+    socket_svko.end();
+  })
+
+  socket_svko.once('data', () => {
+    svkostatus = true;
+    socket_svko.end();
+  })
+
   setTimeout(() => {
     displayStatus(
         serverStatus, AVRserverStatus, ESPserverStatus, walletServerStatus,
         statsStatus, webServicesStatus, PCserverStatus, PC2serverStatus,
         pulseStatus, PC3serverStatus, webminerProxy, starStatus, beyondStatus,
-        difference);
+        svkostatus, difference);
   }, timeout);
 }
 

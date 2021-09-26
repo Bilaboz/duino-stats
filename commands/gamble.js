@@ -29,7 +29,7 @@ module.exports.run = async (client, message, args, color) => {
 
     const roll = Math.random() * 100
 
-    if (roll < 40) {
+    if (roll < 49) {
         query.coins += bet
 
         embed.setColor(color.green)

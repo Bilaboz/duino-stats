@@ -8,10 +8,9 @@ module.exports.run = async (client, message, args, color) => {
     const username = args[1]
     if (!username) return message.channel.send("Provide a username first");
 
-    let balance;
+    let balance, response;
     try {
-        const response = await axios.get(balancesApi + username);
-        
+        response = await axios.get(balancesApi + username);
         if (!response.data.success) return message.channel.send("This user doesn't exist");
         else balance = parseFloat(response.data.result.balance);
     } catch (err) {
@@ -31,8 +30,14 @@ module.exports.run = async (client, message, args, color) => {
     const balanceInUSD = balance * price;
 
     const embed = new MessageEmbed()
+        .setTitle(`${username}'s Duino-Coin account`)
         .setAuthor(message.author.username, message.author.avatarURL())
-        .setDescription(`**${username}**'s balance: **${balance}** <:duco:807188450393980958> ($${balanceInUSD.toFixed(4)})`)
+        .addFields(
+            { name: '<:duco_logo:832307063395975218> Balance', value: `${balance} DUCO ($${balanceInUSD.toFixed(4)})`},
+            { name: ':question: Verified account', value: `${response.data.result.verified}`, inline: true},
+            { name: ':calendar: Created', value: `${response.data.result.created}`, inline: true}
+        )
+        .setDescription(`Tip: try **+bal ${username}** to view more stats using **Duino Stats Mini**`)
         .setFooter(client.user.username, client.user.avatarURL())
         .setTimestamp()
         .setColor(color.yellow)

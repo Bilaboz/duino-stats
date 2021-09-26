@@ -55,17 +55,17 @@ module.exports.run = async (client, message, args, color) => {
 
     const msg = await message.channel.send(embed);
 
-    let send_url = `https://server.duinocoin.com/transaction/`
+    const send_url = `https://server.duinocoin.com/transaction/`
                     + `?username=coinexchange`
                     + `&password=` + encodeURIComponent(process.env.coinexchangePassword)
                     + `&recipient=` + encodeURIComponent(ducoUsername)
                     + `&amount=` + encodeURIComponent(ducoAmount)
-                    + `&memo=Bot coins to DUCO exchange`
+                    + `&memo=Bot coins to DUCO exchange`;
     
     try {
         let response = await axios.get(send_url);
         response = response.data;
-        if (response["success"] == true) {
+        if (response["success"]) {
             let txid = response["result"].split(",")[2];
 
             embed.setColor(color.green)

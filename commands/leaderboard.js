@@ -136,6 +136,8 @@ module.exports.run = async (client, message, args, color) => {
             .setColor(color.green)
             .setTitle("Leaderboard of duco")
             .setDescription(finalstring)
+            .attachFiles("https://server.duinocoin.com/balancechart.png")
+            .setImage('attachment://balancechart.png')
             .setTimestamp()
 
         message.channel.send(lEmbed);

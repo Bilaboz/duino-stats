@@ -1,17 +1,20 @@
 const { MessageEmbed } = require("discord.js");
-const moment = require("moment");
+const dayjs = require("dayjs");
 
 const Profile = require("../models/profile");
 const Incident = require("../models/incident");
 const Count = require("../models/count");
+const { logChannelID, countingChannelID, suggestionChannelID, trueEmojiID, falseEmojiID } = require("../utils/config.json");
 
 let cooldown = new Set();
+dayjs.extend(require('dayjs/plugin/utc'));
+dayjs.extend(require('dayjs/plugin/timezone'));
 
 module.exports.run = async (client, message, args, color) => {
 
     //---------------------------Invite detection------------------------------//
 
-    const date = moment().tz("Europe/Paris").format('LLL');
+    const date = dayjs().tz("Europe/Paris").format('LLL');
     if (message.content.toLowerCase().includes("discord.gg" || "discordapp.com/invite") && !message.member.hasPermission("ADMINISTRATOR")) {
         Incident.findOne({
             userID: message.author.id
@@ -62,20 +65,20 @@ module.exports.run = async (client, message, args, color) => {
 
         message.author.send(dmEmbed);
         message.channel.send(warnEmbed);
-        client.channels.cache.get("699320187664728177").send(warnEmbed); // #commands channel
+        client.channels.cache.get(logChannelID).send(warnEmbed);
         return message.delete();
     }
 
     //---------------------------Suggestions channel------------------------------//
 
-    if (message.channel.id == "677616731468070921") {
-        await message.react("704740848314613960");
-        return await message.react("692069337854378026");
+    if (message.channel.id == suggestionChannelID) {
+        await message.react(trueEmojiID);
+        return await message.react(falseEmojiID);
     }
 
     //---------------------------Counting------------------------------//
 
-    if (message.channel.id == "789855163393376276") {
+    if (message.channel.id == countingChannelID) {
 
         let lm = await message.channel.messages.fetch({ limit: 2 });
         lm = lm.last()

@@ -1,9 +1,9 @@
 const { exec } = require("child_process");
 
-module.exports.run = async (client, message, arg) => {
+module.exports.run = async (client, message) => {
     if (!message.member.hasPermission("KICK_MEMBERS")) return message.channel.send(":no_entry: You dont't have the permission to do that !");
 
-    exec("sudo systemctl restart masterserver", (err, stdout, stderr) => {
+    exec("echo 1 > /home/debian/duino-coin-master-server/config/restart_signal", (err, stdout, stderr) => {
         if (err) {
             message.channel.send(`An error has occured:\n${err}`);
         } else {

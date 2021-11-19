@@ -1,7 +1,12 @@
 const { MessageEmbed } = require("discord.js");
+const dayjs = require("dayjs");
+
 const Incident = require("../models/incident.js");
 const { getMember } = require("../utils/functions.js");
-const moment = require('moment-timezone');
+const { logChannelID } = require("../utils/config.json");
+
+dayjs.extend(require('dayjs/plugin/utc'));
+dayjs.extend(require('dayjs/plugin/timezone'));
 
 module.exports.run = async (client, message, args, color) => {
 
@@ -20,7 +25,7 @@ module.exports.run = async (client, message, args, color) => {
     let reason = args.slice(2).join(" ");
     if (!reason) reason = "No reason specified";
 
-    const date = moment().tz("Europe/Paris").format('LLL');
+    const date = dayjs().tz("Europe/Paris").format('LLL');
 
     const promptEmbed = new MessageEmbed()
         .setAuthor(`Are you sure that you want to kick ${tUser.username}?`)
@@ -100,7 +105,7 @@ module.exports.run = async (client, message, args, color) => {
                 .setTimestamp()
             
             message.channel.send(kickEmbed);
-            client.channels.cache.get("699320187664728177").send(kickEmbed); // #commands channel
+            client.channels.cache.get(logChannelID).send(kickEmbed);
             msg.delete();
             message.delete();
         } else if (collected.first().emoji.name === "❌") {

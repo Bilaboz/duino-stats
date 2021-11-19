@@ -1,23 +1,22 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-const balancesApi = "https://server.duinocoin.com/balances.json";
+const balancesApi = "https://server.duinocoin.com/balances/";
 const priceApi = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
     const username = args[1]
     if (!username) return message.channel.send("Provide a username first");
 
-    let balance;
+    let balance, response;
     try {
-        const response = await axios.get(balancesApi);
-        balance = parseFloat(response.data[username]);
+        response = await axios.get(balancesApi + username);
+        if (!response.data.success) return message.channel.send("This user doesn't exist");
+        else balance = parseFloat(response.data.result.balance);
     } catch (err) {
         console.log(err);
-        return message.channel.send("`ERROR` Can't fetch the balances!");
+        return message.channel.send("`ERROR` Can't fetch the balances: " + err);
     }
-    
-    if (!balance) return message.channel.send("This user doesn't exist or isn't listed in the API");
     
     let price;
     try {
@@ -31,8 +30,14 @@ module.exports.run = async (client, message, args, color) => {
     const balanceInUSD = balance * price;
 
     const embed = new MessageEmbed()
+        .setTitle(`${username}'s Duino-Coin account`)
         .setAuthor(message.author.username, message.author.avatarURL())
-        .setDescription(`**${username}**'s balance: **${balance}** <:duco:807188450393980958> ($${balanceInUSD.toFixed(4)})`)
+        .addFields(
+            { name: '<:duco_logo:832307063395975218> Balance', value: `${balance} DUCO ($${balanceInUSD.toFixed(4)})`},
+            { name: ':question: Verified account', value: `${response.data.result.verified}`, inline: true},
+            { name: ':calendar: Created', value: `${response.data.result.created}`, inline: true}
+        )
+        .setDescription(`Tip: try **+bal ${username}** to view more stats using **Duino Stats Mini**`)
         .setFooter(client.user.username, client.user.avatarURL())
         .setTimestamp()
         .setColor(color.yellow)

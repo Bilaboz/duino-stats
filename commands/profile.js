@@ -1,7 +1,11 @@
 const { MessageEmbed } = require("discord.js");
 const Profile = require("../models/profile.js")
-const moment = require("moment");
+const dayjs = require("dayjs");
+const localizedFormat = require('dayjs/plugin/localizedFormat');
+
 const { getMember } = require("../utils/functions.js");
+
+dayjs.extend(localizedFormat);
 
 module.exports.run = async (client, message, args, color) => {
     let tUser = getMember(message, args[1]);
@@ -42,8 +46,8 @@ module.exports.run = async (client, message, args, color) => {
                            **XP**: ${query.xp} ( ${query.xp}/${xpNeeded} )\n
                            **Bumps**: ${query.bumps}
                            **Daily streak**: ${query.streak}\n
-                           **Join date**: ${moment(tUserGuilded.joinedAt).format("LLL")}
-                           **Account creation date**: ${moment(user.createdAt).format("LLL")}`;
+                           **Join date**: ${dayjs(tUserGuilded.joinedAt).format("LLL")}
+                           **Account creation date**: ${dayjs(user.createdAt).format("LLL")}`;
 
 
         if (query.pDesc) finalstring += `\n\n**Bio**: ${query.pDesc}`;

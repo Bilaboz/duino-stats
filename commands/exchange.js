@@ -1,6 +1,9 @@
 const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
 const net = require("net");
+const axios = require("axios");
+
+const { logChannelID } = require("../utils/config.json");
 
 module.exports.run = async (client, message, args, color) => {
     const amount = parseInt(args[1]);
@@ -9,8 +12,9 @@ module.exports.run = async (client, message, args, color) => {
 
     const ducoUsername = args[2];
     if (!ducoUsername) return message.channel.send("Please specify your Duino-Coin username");
+    if (ducoUsername.includes(",")) return message.channel.send("Please send a valid Duino-Coin username");
 
-    const ducoAmount = amount * 0.015;
+    const ducoAmount = Math.round(amount) / 100;
 
     const query = await Profile.findOne({ userID: message.author.id, guildID: message.guild.id });
 
@@ -44,61 +48,53 @@ module.exports.run = async (client, message, args, color) => {
 
     const embed = new MessageEmbed()
         .setColor(color.orange)
-        .setDescription("Exchanging in progress - this may take a few seconds...")
+        .setDescription("**Exchanging in progress** - this will take a minute at most...")
         .setTimestamp()
         .setAuthor(message.author.username, message.author.avatarURL())
         .setFooter(client.user.username, client.user.avatarURL())
 
     const msg = await message.channel.send(embed);
 
-    const socket = new net.Socket();
-    socket.setEncoding('utf8');
-    socket.connect(2811, "server.duinocoin.com");
-
-    socket.on("error", (error) => {
-        console.log("socket error in exchange command: " + error);
-        query.coins += amount;
-        query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-
-        message.reply(`An error occured while exchanging your coins: ${error}`);
-    })
-
-    socket.on("data", (data) => {
-        if (data.startsWith("2")) {
-            socket.write(`LOGI,coinexchange,${process.env.coinexchangePassword}`);
-        } else if (data.includes("Successfully")) {
-            const txid = data.split(",")[2];
+    const send_url = `https://server.duinocoin.com/transaction/`
+                    + `?username=coinexchange`
+                    + `&password=` + encodeURIComponent(process.env.coinexchangePassword)
+                    + `&recipient=` + encodeURIComponent(ducoUsername)
+                    + `&amount=` + encodeURIComponent(ducoAmount)
+                    + `&memo=Bot coins to DUCO exchange`;
+    
+    try {
+        let response = await axios.get(send_url);
+        response = response.data;
+        if (response["success"]) {
+            let txid = response["result"].split(",")[2];
 
             embed.setColor(color.green)
             embed.setDescription(`Successfully exchanged **${amount} coins** to **${ducoAmount} DUCO** and sent to **${ducoUsername}**
-                                [View transaction in the explorer](https://explorer.duinocoin.com?search=${txid})`)
-
+                                 [View transaction in the explorer](https://explorer.duinocoin.com?search=${txid})`)
             msg.edit(embed);
 
             client.channels.cache
-                .get("699320187664728177") // #commands channel
+                .get(logChannelID)
                 .send(`<@!${message.author.id}> exchanged **${amount} coins** to account **${ducoUsername}**`);
-        } else if (data === "OK") {
-            socket.write(`SEND,Bot coins to DUCO exchange,${ducoUsername},${ducoAmount}`);
-        } else {
+        }
+        else {
             query.coins += amount;
             query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-
-            embed.setColor(color.red)
-
-            try {
-                const error = data.split(",")[1];
-
-                embed.setDescription(`Error exchanging **${amount}** coins\n${error}`);
-
-                msg.edit(embed);
-            } catch (err) {
-                embed.setDescription(`Error exchanging **${amount}** coins\n${err}`);
-
-                msg.edit(embed);
-            }
+            
+            let err_msg = response["message"].split(",")[1];
+            
+            embed.setDescription(`Error 2 exchanging **${amount}** coins\n${err_msg}`);
+            msg.edit(embed);
         }
-    })
+    } catch (err) {
+        console.log(err);
+        
+        query.coins += amount;
+        query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
+        
+        embed.setDescription(`Error exchanging **${amount}** coins\n${err}`);
+        msg.edit(embed);
+    }
 }
     
 

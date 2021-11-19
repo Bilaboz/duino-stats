@@ -1,7 +1,7 @@
 const Discord = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
-const moment = require("moment-timezone");
+const dayjs = require("dayjs");
 
 require('dotenv').config();
 
@@ -15,6 +15,10 @@ const replies = require("./utils/replies.json");
 const prefix = config.prefix;
 
 const client = new Discord.Client();
+
+dayjs.extend(require('dayjs/plugin/utc'));
+dayjs.extend(require('dayjs/plugin/timezone'));
+dayjs.extend(require('dayjs/plugin/calendar'));
 
 client.login(process.env.token);
 
@@ -36,9 +40,13 @@ client.on("ready", () => {
 
         await g.members.fetch();
     })
-
-    console.log(`Successfully fetched invites`);
     console.log(`Successfully fetched members`);
+    console.log(`Successfully fetched invites`);
+
+    if (process.env.NODE_ENV !== "dev") {
+        client.commands.get("start").run(client);
+        console.log("Started the statistics");
+    }
 })
 
 client.commands = new Discord.Collection();
@@ -71,6 +79,10 @@ client.on("message", async (message) => {
     if (message.mentions.has(client.user)) {
         if (message.mentions.everyone) return;
 
+        if (message.content.includes("svkobot")) {
+            return message.reply("svkobot my love");
+        }
+
         const reply = replies[Math.floor(Math.random() * replies.length)];
         message.reply(reply);
     }
@@ -92,7 +104,7 @@ client.on("messageDelete", async (message) => {
     const query = await Snipe.findOne({});
     if (!query) {
         const newSnipe = new Snipe({
-            date: moment(message.createdTimestamp).tz("Europe/Paris").calendar(),
+            date: dayjs(message.createdTimestamp).tz("Europe/Paris").calendar(),
             content: message.content,
             authorAvatar: message.author.avatarURL(),
             authorUsername: message.author.username,
@@ -102,7 +114,7 @@ client.on("messageDelete", async (message) => {
 
         newSnipe.save().catch(err => message.channel.send(err));
     } else {
-        query.date = moment(message.createdTimestamp).tz("Europe/Paris").calendar();
+        query.date = dayjs(message.createdTimestamp).tz("Europe/Paris").calendar();
         query.authorAvatar = message.author.avatarURL();
         query.authorUsername = message.author.username;
         query.channel = message.channel.name;

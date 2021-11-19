@@ -1,4 +1,12 @@
 {
     "prefix": "!",
-    "serverVersion": "2.4"
+    "serverVersion": "2.4",
+
+    "logChannelID": "699320187664728177",
+    "statisticsChannelID": "691936892458893342",
+    "countingChannelID": "789855163393376276",
+    "suggestionChannelID": "677616731468070921",
+
+    "trueEmojiID": "704740848314613960",
+    "falseEmojiID": "692069337854378026"
 }

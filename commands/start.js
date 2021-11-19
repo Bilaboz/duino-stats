@@ -2,16 +2,19 @@ const { MessageEmbed } = require("discord.js");
 const color = require("../utils/color.json");
 const axios = require("axios");
 
+const { statisticsChannelID } = require("../utils/config.json");
 const api = "https://server.duinocoin.com/api.json"
 const nodeapi = "http://www.node-s.co.za/api/v1/duco/exchange_rate";
 
 module.exports.run = async (client, message) => {
-    if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send(":no_entry: You don't have the permission to do that !");
+    let m;
+    if (message) {
+        if(!message.member.hasPermission("MANAGE_MESSAGES")) return message.channel.send(":no_entry: You don't have the permission to do that !");
+        m = await message.channel.send("Starting stats...");
+    }
 
-    const m = await message.channel.send("Starting stats...");
-
-    const channel = client.channels.cache.get('691936892458893342');
-    await channel.messages.fetch({ limit: 3}).then(msgs => msgs.forEach(msg => msg.delete()));
+    const channel = client.channels.cache.get(statisticsChannelID);
+    await channel.messages.fetch({ limit: 3 }).then(msgs => msgs.forEach(msg => msg.delete()));
 
     const tempEmbed = new MessageEmbed().setDescription("Updating...");
     const msg = await channel.send(tempEmbed);
@@ -35,15 +38,6 @@ module.exports.run = async (client, message) => {
             nodesPrice = "error";
         }
 
-        let workersCount;
-        try {
-            workersCount = Object.keys(stats["Active workers"]).length;
-        } catch (err) {
-            console.log(`Statistics update error: ${err}`);
-            workersCount = "error";
-        }
-        
-
         const embed = new MessageEmbed()
         .setColor(color.yellow)
         .setTitle("Duino-Coin Statistics")
@@ -53,7 +47,7 @@ module.exports.run = async (client, message) => {
         .addField(":bricks: Mined Blocks", stats["Mined blocks"], true)
         .addField(":clock9: Last Update", `${stats["Last update"]}`, true)
         .addField(":family_man_woman_boy:  Registered Users", stats["Registered users"], true)
-        .addField(`<:Amusing:685522949905580055> Active Workers`, workersCount, true)
+        .addField(`<:Amusing:685522949905580055> Active Workers`, stats["Miner distribution"]["All"], true)
         .addField(`<:purple_duco_logo:832307025463607347> Estimated DUCO price`, `${stats["Duco price"]}$`, true)
         .addField(`:calendar: All time mined DUCO`, `${stats["All-time mined DUCO"]} ᕲ`, true)
         .addField(`:hash: Last block hash`, stats["Last block hash"], true)
@@ -70,7 +64,7 @@ module.exports.run = async (client, message) => {
     update();
     timer = setInterval(update, 60*1000);
 
-    m.edit("Stats started!");
+    if (message) m.edit("Stats started!");
 }
 
 module.exports.config = {

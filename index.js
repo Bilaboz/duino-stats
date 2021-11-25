@@ -160,16 +160,16 @@ client.on("guildMemberAdd", async (member) => {
     if (member.guild.id != "677615191793467402") return;
 
     if (config.antiRaid) {
-        if (lastJoined.length >= 5)
+        if (lastJoined.length >= 5) {
             lastJoined.shift();
-        lastJoined.push(Date.now());
-
-        if (lastJoined[0] - Date.now() < 60000) {
-            member.send("You've been kicked from Duino-Coin Discord because it's currently under attack! \
-                        If you're a not a bot you can try to join again in 1 minute https://discord.gg/k48Ht5y");
-            member.kick();
-            client.channels.cache.get(config.logChannelID).send(`Raid detected! <@${member.id}> has been kicked`);
+            if (lastJoined[0] - Date.now() < 60000) {
+                member.send("You've been kicked from Duino-Coin Discord because it's currently under attack! \
+                            If you're a not a bot you can try to join again in 1 minute https://discord.gg/k48Ht5y");
+                member.kick();
+                client.channels.cache.get(config.logChannelID).send(`Raid detected! <@${member.id}> has been kicked`);
+            }
         }
+        lastJoined.push(Date.now());
     }
 
     const channel = member.guild.channels.cache.find(c => c.id === "677617050503479325");

@@ -2,6 +2,8 @@
     "prefix": "!",
     "serverVersion": "2.7",
 
+    "antiRaid": true,
+
     "logChannelID": "692701750536175646",
     "statisticsChannelID": "691936892458893342",
     "countingChannelID": "789855163393376276",

@@ -133,8 +133,8 @@ module.exports.run = async (client, message, args, color) => {
         cooldown.delete(message.author.id);
     }, 10000)
     
-    const cAmount = Math.floor(Math.random() * 10) + 5;
-    const cChance = Math.floor(Math.random() * 12);
+    const cAmount = Math.floor(Math.random() * 3) + 5;
+    const cChance = Math.floor(Math.random() * 15);
     const xpChance = Math.floor(Math.random() * 3);
     const xpAmount = Math.floor(Math.random() * 15) + 9;
 

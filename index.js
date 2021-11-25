@@ -16,6 +16,11 @@ const prefix = config.prefix;
 
 const client = new Discord.Client();
 
+const allowed_channels = [
+    "678301439835111455", // bots
+    "819146399764840448"  // bots-2
+];
+
 dayjs.extend(require('dayjs/plugin/utc'));
 dayjs.extend(require('dayjs/plugin/timezone'));
 dayjs.extend(require('dayjs/plugin/calendar'));
@@ -31,7 +36,6 @@ const guildInvites = new Map();
 
 client.on("ready", () => {
     console.log("Connected");
-    client.user.setActivity("with your duinos - !help", { type: "PLAYING" });
 
     client.guilds.cache.forEach(async (g) => {
         g.fetchInvites().then(invites => {
@@ -47,6 +51,8 @@ client.on("ready", () => {
         client.commands.get("start").run(client);
         console.log("Started the statistics");
     }
+
+    client.user.setActivity("with your duinos - !help", { type: "PLAYING" });
 })
 
 client.commands = new Discord.Collection();
@@ -72,16 +78,13 @@ fs.readdir("./commands/", (err, files) => {
     })
 })
 
+
 client.on("message", async (message) => {
     if (!message.guild) return;
     if (message.author.bot) return;
 
     if (message.mentions.has(client.user)) {
         if (message.mentions.everyone) return;
-
-        if (message.content.includes("svkobot")) {
-            return message.reply("svkobot my love");
-        }
 
         const reply = replies[Math.floor(Math.random() * replies.length)];
         message.reply(reply);
@@ -90,9 +93,27 @@ client.on("message", async (message) => {
     const args = message.content.slice(prefix.length).split(" ");
     const cmd = args[0];
 
+    cont = true;
     if (message.content.startsWith(prefix)) {
-        const commandfile = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
-        if (commandfile) commandfile.run(client,message,args,color);
+        if (!allowed_channels.includes(message.channel.id) && !message.member.hasPermission("MANAGE_MESSAGES")) {
+            message.channel.send(message.author.username
+                + ", use the <#678301439835111455> channel for bot commands!")
+            .then(msg => {
+                msg.delete({
+                    timeout: 5000
+                });
+            });
+            setTimeout(() => {
+                message.delete().catch();
+            }, 5000);
+        } else {
+            const commandfile = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
+            if (commandfile) {
+                message.channel.startTyping();
+                commandfile.run(client,message,args,color);
+                message.channel.stopTyping();
+            }
+        }
     } else {
         onmsg.run(client, message, args, color);
     }
@@ -149,9 +170,9 @@ client.on("guildMemberAdd", async (member) => {
         guildInvites.set(member.guild.id, newInvites);
         const usedInvite = newInvites.find(invite => cachedInvites.get(invite.code).uses < invite.uses)
 
-        channel.send(`<:duco:807188450393980958> Welcome on the server **<@${member.id}>**!\nInvited by **${usedInvite.inviter.tag}**`);
+        channel.send(`<:duco_logo:832307063395975218> Welcome on the **official Duino-Coin Discord**, **<@${member.id}>**!\nInvited by **${usedInvite.inviter.tag}**`);
     } catch {
-        channel.send(`<:duco:807188450393980958> Welcome on the server **<@${member.id}>**!\nBut I couldn't figure out the inviter ¯\\_(ツ)_/¯`);
+        channel.send(`<:duco_logo:832307063395975218> Welcome on the **official Duino-Coin Discord**, **<@${member.id}>**!\nBut I couldn't figure out the inviter ¯\\_(ツ)_/¯`);
     }
 
 })

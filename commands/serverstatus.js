@@ -24,7 +24,7 @@ module.exports.run =
   const displayStatus =
       (serverStatus, AVRserverStatus, ESPserverStatus, walletServerStatus,
        statsStatus, webServicesStatus, PCserverStatus, PC2serverStatus,
-       pulseStatus, PC3serverStatus, webminerProxy, starStatus, beyondStatus,
+       PC3serverStatus, webminerProxy, starStatus, beyondStatus,
        svkostatus, difference) => {
         const editedStatusEmbed =
             new MessageEmbed()
@@ -61,17 +61,6 @@ module.exports.run =
           finalstring += '2810: **Pool sync port**: ⚠️ (timeout)\n';
 
         finalstring += 'Worker limit: **Mining disabled**\n';
-
-        finalstring +=
-            ' :point_right: PulsePool:\n';
-
-        if (pulseStatus)
-          finalstring +=
-              `5999: **General mining port**:  <:true:709441577503817799>\n`;
-        else
-          finalstring += `5999: **General mining port**: ⚠️ (timeout)\n`;
-
-        finalstring += 'Worker limit: **50 miners**\n';
 
         finalstring +=
             ' :point_right: StarPool:\n';
@@ -141,6 +130,7 @@ module.exports.run =
 
         editedStatusEmbed.setColor(color.green);
         editedStatusEmbed.setDescription(finalstring);
+        message.channel.stopTyping();
         m.edit(editedStatusEmbed);
       }
 
@@ -157,14 +147,14 @@ module.exports.run =
 
   let statsStatus, serverStatus, walletServerStatus, AVRserverStatus,
       ESPserverStatus, difference, webServicesStatus, PCserverStatus,
-      PC2serverStatus, pulseStatus, PC3serverStatus, webminerProxy, starStatus,
+      PC2serverStatus, PC3serverStatus, webminerProxy, starStatus,
       svkostatus, beyondStatus;
 
   // ------------ Statistics Status ------------ //
-
+  message.channel.startTyping();
   let response;
   try {
-    response = await axios.get('https://server.duinocoin.com/statistics');
+    response = await axios.get('http://127.0.0.1/statistics');
   } catch (err) {
     console.log(err);
     statsStatus = false;
@@ -177,9 +167,9 @@ module.exports.run =
     const now = dayjs()
     difference = now.diff(lastUpdate, 'seconds');
 
-    if (difference < 60) {
+    if (difference <= 120) {
       statsStatus = true;
-    } else if (difference < 60) {
+    } else if (difference > 120) {
       statsStatus = 'partial';
     } else {
       statsStatus = false;
@@ -192,7 +182,7 @@ module.exports.run =
   // ------------ Webminer proxy status ------------ //
   try {
     const ws2 = new WebSocket(
-        'wss://server.duinocoin.com:14808', 
+        'wss://server.duinocoin.com:14808',
         {origin: 'https://51.15.127.80'});
 
     ws2.on('message', () => {
@@ -358,27 +348,6 @@ module.exports.run =
     socket_pc3.end();
   });
 
-  // ------------ Pulse pool status ------------ //
-
-  const socket_p = new net.Socket();
-  socket_p.setEncoding('utf8');
-  socket_p.setTimeout(timeout);
-  socket_p.connect(1224, '149.91.88.18');
-
-  socket_p.on('error', () => {
-    pulseStatus = false;
-  });
-
-  socket_p.on('timeout', () => {
-    pulseStatus = false;
-    socket_p.end();
-  })
-
-  socket_p.once('data', () => {
-    pulseStatus = true;
-    socket_p.end();
-  })
-
   // ------------ Star pool status ------------ //
 
   const socket_star = new net.Socket();
@@ -446,7 +415,7 @@ module.exports.run =
     displayStatus(
         serverStatus, AVRserverStatus, ESPserverStatus, walletServerStatus,
         statsStatus, webServicesStatus, PCserverStatus, PC2serverStatus,
-        pulseStatus, PC3serverStatus, webminerProxy, starStatus, beyondStatus,
+        PC3serverStatus, webminerProxy, starStatus, beyondStatus,
         svkostatus, difference);
   }, timeout);
 }

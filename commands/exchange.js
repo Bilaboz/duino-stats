@@ -8,7 +8,7 @@ const { logChannelID } = require("../utils/config.json");
 module.exports.run = async (client, message, args, color) => {
     const amount = parseInt(args[1]);
     if (!amount) return message.channel.send("Please specify desired amount of bot coins to exchange");
-    if (amount < 100) return message.channel.send("Minimum exchangeable amount is 100 bot coins");
+    if (amount < 100) return message.channel.send("Minimum exchangeable amount is 100 bot coins (1 DUCO)");
 
     const ducoUsername = args[2];
     if (!ducoUsername) return message.channel.send("Please specify your Duino-Coin username");
@@ -78,12 +78,13 @@ module.exports.run = async (client, message, args, color) => {
                 .send(`<@!${message.author.id}> exchanged **${amount} coins** to account **${ducoUsername}**`);
         }
         else {
+            console.log(response);
             query.coins += amount;
             query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
             
             let err_msg = response["message"].split(",")[1];
             
-            embed.setDescription(`Error 2 exchanging **${amount}** coins\n${err_msg}`);
+            embed.setDescription(`Error exchanging **${amount}** coins\n${err_msg}`);
             msg.edit(embed);
         }
     } catch (err) {

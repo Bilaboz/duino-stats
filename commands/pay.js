@@ -11,9 +11,14 @@ module.exports.run = async (client, message, args, color) => {
 
     if (tUser.id == message.author.id) return message.channel.send("<:bruh:716749844504510526>");
 
-    const amount = parseInt(args[2]);
+    let amount = parseInt(args[2]);
     if (!amount) return message.channel.send("Please specify a number of coins to send!");
     if (amount < 0) return message.channel.send("You can't specify a negative amount of coins to send");
+
+    if (args[3])
+        if (args[3].toLowerCase() == "duco") {
+        amount = amount * 100;
+    }
 
     const user1 = await Profile.findOne({ userID: message.author.id, guildID: message.guild.id });
     const user2 = await Profile.findOne({ userID: tUser.id, guildID: message.guild.id });
@@ -67,7 +72,7 @@ module.exports.run = async (client, message, args, color) => {
         .setColor(color.green)
         .setFooter(client.user.username, client.user.avatarURL())
         .setTimestamp()
-        .setDescription(`**${message.author.username}**, you sent **${amount}** coins to **${tUser.username}** <:true:709441577503817799>`)
+        .setDescription(`**${message.author.username}**, you sent **${amount}** bot coins (${amount/100} DUCO) to **${tUser.username}** <:true:709441577503817799>`)
 
     message.channel.send(successEmbed);
 }

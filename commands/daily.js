@@ -31,7 +31,7 @@ module.exports.run = async (client, message, args, color) => {
         })
 
         newProfile.save().catch(err => message.channel.send(`Oops something went wrong ${err} lmao`));
-        dailyEmbed.setDescription(`**${message.author.username}** you successfully claimed your daily reward!\nYou got **100 bot coins** <:pepeclassy:701487042869329961>`);
+        dailyEmbed.setDescription(`**${message.author.username}** you successfully claimed your daily reward!\nYou got **10 bot coins** (0.1 DUCO) <:pepeclassy:701487042869329961>`);
         return message.channel.send(dailyEmbed);
     }
     
@@ -40,10 +40,10 @@ module.exports.run = async (client, message, args, color) => {
         return message.channel.send(dailyEmbed);
     }
     
-    let coinAmount = Math.floor((Math.random() * 30) + 65);
+    let coinAmount = Math.floor((Math.random() * 10) + 25);
     if (query.streak) coinAmount += query.streak * 1;
 
-    let finalstring = `**${message.author.username}** you successfully claimed your daily reward!\nYou got **${coinAmount} bot coins** <:pepeclassy:701487042869329961>`;
+    let finalstring = `**${message.author.username}** you successfully claimed your daily reward!\nYou got **${coinAmount} bot coins (${coinAmount / 100} DUCO)** <:pepeclassy:701487042869329961>`;
 
     if (query.lastClaim) {
         const lastClaim = dayjs.unix(query.lastClaim);

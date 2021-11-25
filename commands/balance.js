@@ -1,8 +1,8 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-const balancesApi = "https://server.duinocoin.com/balances/";
-const priceApi = "https://server.duinocoin.com/api.json";
+const balancesApi = "http://127.0.0.1/balances/";
+const priceApi = "http://127.0.0.1/api.json";
 
 module.exports.run = async (client, message, args, color) => {
     const username = args[1]

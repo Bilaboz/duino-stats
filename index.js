@@ -93,7 +93,6 @@ client.on("message", async (message) => {
     const args = message.content.slice(prefix.length).split(" ");
     const cmd = args[0];
 
-    cont = true;
     if (message.content.startsWith(prefix)) {
         if (!allowed_channels.includes(message.channel.id) && !message.member.hasPermission("MANAGE_MESSAGES")) {
             message.channel.send(message.author.username
@@ -161,13 +160,14 @@ client.on("guildMemberAdd", async (member) => {
 
     if (config.antiRaid) {
         if (lastJoined.length >= 5) {
-            lastJoined.shift();
-            if (lastJoined[0] - Date.now() < 60000) {
+            console.log(lastJoined[0] - Date.now())
+            /*if (lastJoined[0] - Date.now() < 60000) {
                 member.send("You've been kicked from Duino-Coin Discord because it's currently under attack! \
                             If you're a not a bot you can try to join again in 1 minute https://discord.gg/k48Ht5y");
                 member.kick();
                 client.channels.cache.get(config.logChannelID).send(`Raid detected! <@${member.id}> has been kicked`);
-            }
+            }*/
+            lastJoined.shift();
         }
         lastJoined.push(Date.now());
     }

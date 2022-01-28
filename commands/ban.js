@@ -9,18 +9,22 @@ dayjs.extend(require('dayjs/plugin/utc'));
 dayjs.extend(require('dayjs/plugin/timezone'));
 
 module.exports.run = async (client, message, args, color) => {
-    if (!message.member.hasPermission("BAN_MEMBERS")) return message.channel.send(":no_entry: You dont't have the permission to do that !")
+    if (!message.member.hasPermission("BAN_MEMBERS"))
+        return message.channel.send(":no_entry: You dont't have the permission to do that !")
     
-    if (!args[1]) return message.channel.send("Please specify a user");
+    if (!args[1])
+        return message.channel.send("Please specify a user");
     
     let tUser = getMember(message, args[1]);
-    if (tUser === -1) return;
+    if (tUser === -1)
+        return;
+    
     const guildedUser = tUser;
     tUser = tUser.user;
 
-    if (!tUser) return message.channel.send("Please specify a user");
+    if (!tUser || tUser == message.author)
+        return message.channel.send("Can't find the specified user (already banned?");
 
-    if (tUser === message.author) return message.channel.send("You can't ban yourself lol");
     if (guildedUser.hasPermission("ADMINISTRATOR")) return message.channel.send("You can't ban an administrator");
 
     let reason = args.slice(2).join(" ");

@@ -3,8 +3,7 @@ const color = require("../utils/color.json");
 const axios = require("axios");
 
 const { statisticsChannelID } = require("../utils/config.json");
-const api = "https://server.duinocoin.com/api.json"
-const nodeapi = "http://www.node-s.co.za/api/v1/duco/exchange_rate";
+const api = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message) => {
     let m;
@@ -30,12 +29,12 @@ module.exports.run = async (client, message) => {
             return msg.edit(tempEmbed);
         }
         
-        let nodesPrice
+        let furimPrice;
         try {
-            const noderesponse = await axios.get(nodeapi);
-            nodesPrice = noderesponse.data.value;
+            const noderesponse = await axios.get(api);
+            furimPrice = noderesponse.data["Duco Furim price"];
         } catch (err) {
-            nodesPrice = "error";
+            furimPrice = "error";
         }
 
         const embed = new MessageEmbed()
@@ -53,7 +52,7 @@ module.exports.run = async (client, message) => {
         .addField(`:hash: Last block hash`, stats["Last block hash"], true)
         .addField(":link: Active connections", stats["Active connections"], true)
         .addField(":desktop: Server CPU usage", stats["Server CPU usage"] + "%", true)
-        .addField(":currency_exchange: Node-S Exchange price", nodesPrice + "$", true)
+        .addField(":currency_exchange: Furim Exchange price", furimPrice + "$", true)
         .setThumbnail("https://raw.githubusercontent.com/revoxhere/duino-coin/master/Resources/duco.png")
         .setFooter("The statistics are updated every 60 seconds", client.user.avatarURL(),)
         .setTimestamp()

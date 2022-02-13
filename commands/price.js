@@ -16,14 +16,14 @@ module.exports.run = async (client, message, args, color) => {
     const price_bch = response.data["Duco price BCH"];
     const price_trx = response.data["Duco price TRX"];
     const justswapprice = response.data["Duco JustSwap price"];
-    const nodeprice = response.data["Duco Node-S price"];
+    const furim_price = response.data["Duco Furim price"];
 
     const embed = new MessageEmbed()
         .setAuthor(message.author.username, message.author.avatarURL())
         .addField("<:duco:807188450393980958> DUCO Exchange (XMG)", `$${price}`, true)
         .addField("<:duco:807188450393980958> DUCO Exchange (BCH)", `$${price_bch}`, true)
         .addField("<:duco:807188450393980958> DUCO Exchange (TRX)", `$${price_trx}`, true)
-        .addField(":currency_exchange: Node-S Exchange", `$${nodeprice}`, true)
+        .addField(":currency_exchange: Furim Exchange", `$${furim_price}`, true)
         .addField(":white_flower: JustSwap", `$${justswapprice}`, true)
         .addField(":person_standing: otc-trading", `check <#692840562067243008>`, true)
         .setDescription(`Please keep in mind that price on the chart is updated every 1 day.`)

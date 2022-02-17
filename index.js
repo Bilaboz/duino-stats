@@ -18,7 +18,8 @@ const client = new Discord.Client();
 
 const allowed_channels = [
     "678301439835111455", // bots
-    "819146399764840448"  // bots-2
+    "819146399764840448",  // bots-2
+    "677616879787049000" // giveaways
 ];
 
 dayjs.extend(require('dayjs/plugin/utc'));

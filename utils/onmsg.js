@@ -15,7 +15,11 @@ module.exports.run = async (client, message, args, color) => {
     //---------------------------Invite detection------------------------------//
 
     const date = dayjs().tz("Europe/Paris").format('LLL');
-    if (message.content.toLowerCase().includes("discord.gg" || "discordapp.com/invite") && !message.member.hasPermission("ADMINISTRATOR")) {
+    if ((message.content.toLowerCase().includes("discord.gg") ||
+        message.content.toLowerCase().includes("discordapp.com/invite") ||
+        message.content.toLowerCase().includes("t.me") ||
+        message.content.toLowerCase().includes("telegram.me")) &&
+        !message.member.hasPermission("ADMINISTRATOR")) {
         Incident.findOne({
             userID: message.author.id
         }, (err, query) => {
@@ -27,7 +31,7 @@ module.exports.run = async (client, message, args, color) => {
                     userID: message.author.id,
                     reason: "Posted an invite",
                     type: "Warn",
-                    moderator: "Duino",
+                    moderator: "Duino Stats",
                     time: date,
                     count: 1
                 });
@@ -35,7 +39,7 @@ module.exports.run = async (client, message, args, color) => {
                 newIncident.save().catch(err => message.channel.send(err));
             } else {
                 query.reason.push("Posted an invite");
-                query.moderator.push("Duino");
+                query.moderator.push("Duino Stats");
                 query.time.push(date);
                 query.type.push("Warn");
                 query.count += 1;
@@ -47,7 +51,7 @@ module.exports.run = async (client, message, args, color) => {
         const dmEmbed = new MessageEmbed()
             .setTitle("You have been warned")
             .addField("Reason", "Posted an invite")
-            .addField("Moderator", "Duino")
+            .addField("Moderator", "Duino Stats")
             .addField("Date", date)
             .setColor("#ff5c5c")
             .setFooter("The date is UTC+2")
@@ -57,7 +61,7 @@ module.exports.run = async (client, message, args, color) => {
             .setTitle("New warn")
             .setDescription(`**${message.author.username}** have been warned!`)
             .addField("Reason", "Posted an invite")
-            .addField("Moderator", "Duino")
+            .addField("Moderator", "Duino Stats")
             .addField("Date", date)
             .setColor("#ff5c5c")
             .setFooter("The date is UTC+2")
@@ -87,31 +91,43 @@ module.exports.run = async (client, message, args, color) => {
         if (!query) {
             const newCount = new Count({ count: 1, record: 0, guildId: message.guild.id });
             newCount.save().catch(err => message.channel.send(err));
-            return message.channel.send("Server channel finished initalizing, please start again");
+            return message.channel.send("Server channel finished initalizing, please start again").then(m => m.delete({ timeout: 4000 }));
+            setTimeout(() => {
+                message.delete().catch();
+            }, 5000);
         }
 
         if (lm.author.id == message.author.id) {
             if (query.count > query.record) query.record = query.count;
             query.count = 1;
             await query.save().catch(err => message.channel.send(err));
-            message.channel.send(`<@${message.author.id}> you can't count twice in a row!\nCurrent record: ${query.record}\nStarting again`);
-            return await message.channel.send("1");
+            message.channel.send(`<@${message.author.id}> you can't count twice in a row!`).then(m => m.delete({ timeout: 4000 }));
+            setTimeout(() => {
+                message.delete().catch();
+            }, 5000);
+            //return await message.channel.send("1");
         }
 
         if (!/^[0-9]*$/.test(message.content)) {
             if (query.count > query.record) query.record = query.count;
             query.count = 1;
             await query.save().catch(err => message.channel.send(err));
-            message.channel.send(`<@${message.author.id}> please send only numbers!\nCurrent record: ${query.record}\nStarting again`);
-            return await message.channel.send("1");
+            message.channel.send(`<@${message.author.id}> please send only numbers!`).then(m => m.delete({ timeout: 4000 }));
+            //return await message.channel.send("1");
+            setTimeout(() => {
+                message.delete().catch();
+            }, 5000);
         }
         
         if (!(parseInt(message.content) - parseInt(lm.content) === 1)) {
             if (query.count > query.record) query.record = query.count;
             query.count = 1;
             await query.save().catch(err => message.channel.send(err));
-            message.channel.send(`<@${message.author.id}> doesn't know how to count <:bruh:716749844504510526>\nCurrent record: ${query.record}\nStarting again`);
-            return await message.channel.send("1");
+            message.channel.send(`<@${message.author.id}> doesn't know how to count <:bruh:716749844504510526>`).then(m => m.delete({ timeout: 4000 }));
+            //return await message.channel.send("1");
+            setTimeout(() => {
+                message.delete().catch();
+            }, 5000);
         } else {
             query.count += 1
             return await query.save().catch(err => message.channel.send(err));

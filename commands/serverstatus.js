@@ -108,25 +108,18 @@ module.exports.run =
 
         if (statsStatus)
           finalstring +=
-              `80: **Duino-Coin REST API**: <:true:709441577503817799> (Last update: ${
+              `**Duino-Coin REST API**: <:true:709441577503817799> (Last update: ${
                   difference})\n`;
         else if (!statsStatus)
           finalstring +=
-              `80: **Duino-Coin REST API**: <:nop:692067038453170283> (Last update: ${
+              `**Duino-Coin REST API**: <:nop:692067038453170283> (Last update: ${
                   difference})\n`;
         else
-          finalstring += `80: **Duino-Coin REST API**: ⚠️ (Last update: ${
+          finalstring += `**Duino-Coin REST API**: ⚠️ (Last update: ${
               difference})\n`;
 
-        if (webminerProxy)
-          finalstring +=
-              `14808: **Web Miner websocket proxy**:  <:true:709441577503817799>\n`;
-        else
-          finalstring +=
-              `14808: **Web Miner websocket proxy**: ⚠️ (timeout)\n`;
-
         finalstring +=
-            `\nRemember to firstly check the <#677615873409941522> channel if something's wrong`;
+            `\nRemember to firstly check the <#677615873409941522> channel if something's wrong\nMore stats on **[status.duinocoin.com](https://status.duinocoin.com)**`;
 
         editedStatusEmbed.setColor(color.green);
         editedStatusEmbed.setDescription(finalstring);
@@ -154,7 +147,7 @@ module.exports.run =
   message.channel.startTyping();
   let response;
   try {
-    response = await axios.get('http://127.0.0.1/statistics');
+    response = await axios.get('https://server.duinocoin.com/statistics');
   } catch (err) {
     console.log(err);
     statsStatus = false;
@@ -353,7 +346,7 @@ module.exports.run =
   const socket_star = new net.Socket();
   socket_star.setEncoding('utf8');
   socket_star.setTimeout(timeout);
-  socket_star.connect(6006, '51.158.182.90');
+  socket_star.connect(1337, '51.158.182.90');
 
   socket_star.on('error', () => {
     starStatus = false;
@@ -374,7 +367,7 @@ module.exports.run =
   const socket_beyond = new net.Socket();
   socket_beyond.setEncoding('utf8');
   socket_beyond.setTimeout(timeout);
-  socket_beyond.connect(6000, 'beyondpool.io');
+  socket_beyond.connect(6003, '50.112.145.154');
 
   socket_beyond.on('error', () => {
     beyondStatus = false;
@@ -390,12 +383,12 @@ module.exports.run =
     socket_beyond.end();
   })
 
-  // ------------ Beyond pool status ------------ //
+  // ------------ Svko pool status ------------ //
 
   const socket_svko = new net.Socket();
   socket_svko.setEncoding('utf8');
   socket_svko.setTimeout(timeout);
-  socket_svko.connect(6000, '5.230.69.132');
+  socket_svko.connect(9704, '5.230.69.132');
 
   socket_svko.on('error', () => {
     svkostatus = false;

@@ -37,6 +37,8 @@ const guildInvites = new Map();
 client.on("ready", () => {
     console.log("Connected");
 
+    client.user.setAvatar('./duino.png');
+
     client.guilds.cache.forEach(async (g) => {
         g.fetchInvites().then(invites => {
             guildInvites.set(g.id, invites);

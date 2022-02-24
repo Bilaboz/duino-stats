@@ -1,5 +1,6 @@
 const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
+const crypto = require('crypto');
 
 module.exports.run = async (client, message, args, color) => {
 
@@ -25,11 +26,9 @@ module.exports.run = async (client, message, args, color) => {
         .setAuthor(message.author.username, message.author.avatarURL())
         .setFooter(client.user.username, client.user.avatarURL())
         .setTimestamp()
-        
 
-    const roll = Math.random() * 100
-
-    if (roll < 49) {
+    const roll = crypto.randomInt(100);
+    if (roll < 48) {
         query.coins += bet
 
         embed.setColor(color.green)

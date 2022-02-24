@@ -40,7 +40,7 @@ module.exports.run = async (client, message, args, color) => {
 
 
         message.channel.send(delEmbed);
-        client.channels.cache.get("699320187664728177").send(delEmbed);
+        client.channels.cache.get("692701750536175646").send(delEmbed);
     })
 
 }

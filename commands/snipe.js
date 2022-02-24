@@ -22,7 +22,7 @@ module.exports.run = async (client, message) => {
 
 module.exports.config = {
     name: "snipe",
-    aliases: [],
+    aliases: ["sniper"],
     usage: "",
     category: "general",
     desc: "Show the last deleted message"

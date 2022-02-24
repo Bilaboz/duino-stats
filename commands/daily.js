@@ -3,7 +3,6 @@ const dayjs = require("dayjs");
 const { MessageEmbed } = require("discord.js");
 
 module.exports.run = async (client, message, args, color) => {
-
     const now = dayjs();
 
     const dailyEmbed = new MessageEmbed()
@@ -49,11 +48,12 @@ module.exports.run = async (client, message, args, color) => {
         const lastClaim = dayjs.unix(query.lastClaim);
         const difference = now.diff(lastClaim, "hours");
 
-        if (difference >= 24) {
+        if (!lastClaim.isSame(now, "day")) {
             if (!query.streak) query.streak = 0;
 
             if (difference >= 48) {
-                finalstring += `\nYou lost your daily streak of **${query.streak}** ❌`;
+		if (query.streak)
+                    finalstring += `\nYou lost your daily streak of **${query.streak}** ❌`;
                 query.streak = 0;
             } else {
                 query.streak += 1;
@@ -68,7 +68,7 @@ module.exports.run = async (client, message, args, color) => {
             message.channel.send(dailyEmbed);
         } else {
             dailyEmbed.setColor(color.red);
-            dailyEmbed.setDescription(`**${message.author.username}** you will be able to claim your daily reward in ${24 - (now.diff(lastClaim, "hours"))} hours`);
+            dailyEmbed.setDescription(`**${message.author.username}** you will be able to claim your daily reward after 0:00 UTC+1`);
 
             message.channel.send(dailyEmbed)
         }

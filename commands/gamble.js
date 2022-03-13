@@ -28,7 +28,7 @@ module.exports.run = async (client, message, args, color) => {
         .setTimestamp()
 
     const roll = crypto.randomInt(100);
-    if (roll < 48) {
+    if (roll < 46) {
         query.coins += bet
 
         embed.setColor(color.green)

@@ -3,6 +3,8 @@ const Profile = require("../models/profile");
 
 module.exports.run = async (client, message, args, color) => {
 
+    return message.channel.send(`**${message.author.username}**, this command is temporarily disabled`);
+
     const amount = parseInt(args[1]);
     if (!amount) return message.channel.send("Please specify a number of coins to bet!");
     if (amount <= 0) return message.channel.send("You can't specify a negative number");
@@ -75,7 +77,7 @@ module.exports.run = async (client, message, args, color) => {
 
                 const roll = Math.random() * 100;
 
-                if (roll < 50) {
+                if (roll < 49) {
                     player1.coins += parseInt(amount * 0.95);
                     player2.coins -= amount;
 
@@ -116,7 +118,7 @@ module.exports.run = async (client, message, args, color) => {
 
                 const roll = Math.random() * 100;
 
-                if (roll < 49) {
+                if (roll < 47) {
                     player1.coins += amount;
                     player1.save().catch(err => message.channel.send(`Something went wrong ${err}`));
 

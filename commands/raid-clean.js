@@ -19,7 +19,11 @@ module.exports.run = async (client, message, args) => {
         }
     })
     
-    const promptMsg = await message.channel.send(`You are about to kick ${toBan.length} members, continue?`);
+    if (!toBan.length)
+        return message.channel.send("No users were found");
+
+    const promptMsg = await message.channel.send(`You are about to kick ${toBan.length} members\n`
+                                                + `From ${toBan[0].user.username} to ${toBan[toBan.length - 1].user.username}, continue?`);
     const validReactions = ["✅", "❌"];
     const filter = (reaction, user) => validReactions.includes(reaction.emoji.name) && user.id === message.author.id;
 

@@ -1,6 +1,9 @@
 const { MessageEmbed } = require("discord.js");
-const api = "https://server.duinocoin.com/api.json";
 const axios = require("axios");
+
+const { ducoEmojiID } = require("../utils/config.json");
+
+const api = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
 
@@ -20,9 +23,9 @@ module.exports.run = async (client, message, args, color) => {
 
     const embed = new MessageEmbed()
         .setAuthor(message.author.username, message.author.avatarURL())
-        .addField("<:duco:807188450393980958> DUCO Exchange (XMG)", `$${price}`, true)
-        .addField("<:duco:807188450393980958> DUCO Exchange (BCH)", `$${price_bch}`, true)
-        .addField("<:duco:807188450393980958> DUCO Exchange (TRX)", `$${price_trx}`, true)
+        .addField(`<:duco:${ducoEmojiID}> DUCO Exchange (XMG)`, `$${price}`, true)
+        .addField(`<:duco:${ducoEmojiID}> DUCO Exchange (BCH)`, `$${price_bch}`, true)
+        .addField(`<:duco:${ducoEmojiID}> DUCO Exchange (TRX)`, `$${price_trx}`, true)
         .addField(":currency_exchange: Node-S Exchange", `$${nodeprice}`, true)
         .addField(":white_flower: JustSwap", `$${justswapprice}`, true)
         .addField(":person_standing: otc-trading", `check <#692840562067243008>`, true)

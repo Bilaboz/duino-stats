@@ -1,13 +1,10 @@
-const {
-    MessageEmbed
-} = require("discord.js");
-const Profile = require("../models/profile.js")
-    const dayjs = require("dayjs");
+const { MessageEmbed } = require("discord.js");
+const dayjs = require("dayjs");
 const localizedFormat = require('dayjs/plugin/localizedFormat');
 
-const {
-    getMember
-} = require("../utils/functions.js");
+const Profile = require("../models/profile.js")
+const { getMember } = require("../utils/functions.js");
+const { trueEmojiID } = require("../utils/config.json");
 
 dayjs.extend(localizedFormat);
 
@@ -39,7 +36,7 @@ module.exports.run = async(client, message, args, color) => {
                     })
 
                     newProfile.save().catch(err => message.channel.send(`Oops something went wrong ${err}`))
-                    return message.channel.send("**Please re-execute the command** <:true:704740848314613960>");
+                    return message.channel.send(`**Please re-execute the command** <:true:${trueEmojiID}>`);
             }
 
             const tUserGuilded = message.guild.members.cache.get(user.id);

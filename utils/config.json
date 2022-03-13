@@ -1,6 +1,5 @@
 {
     "prefix": "!",
-    "serverVersion": "2.7",
 
     "antiRaid": false,
 
@@ -8,7 +7,9 @@
     "statisticsChannelID": "691936892458893342",
     "countingChannelID": "789855163393376276",
     "suggestionChannelID": "677616731468070921",
+    "botsChannelID": "678301439835111455",
 
     "trueEmojiID": "704740848314613960",
-    "falseEmojiID": "692069337854378026"
+    "falseEmojiID": "692069337854378026",
+    "ducoEmojiID": "832307063395975218"
 }

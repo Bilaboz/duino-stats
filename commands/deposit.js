@@ -4,7 +4,7 @@ const dayjs = require("dayjs");
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 
 const Profile = require("../models/profile.js");
-const { logChannelID } = require("../utils/config.json");
+const { logChannelID, ducoEmojiID } = require("../utils/config.json");
 
 const balanceApi = "https://server.duinocoin.com/balances/";
 const transactionsApi = "https://server.duinocoin.com/transactions/";
@@ -31,7 +31,7 @@ module.exports.run = async (client, message, args, color) => {
         .setFooter("Automatically canceled after 30 seconds", client.user.avatarURL())
         .setTimestamp()
         .setColor(color.orange)
-        .setDescription(`Are you sure that you want to exchange **${ducoAmount}** <:duco:807188450393980958> to **${coinAmount} coins**?`)
+        .setDescription(`Are you sure that you want to exchange **${ducoAmount}** <:duco:${ducoEmojiID}> to **${coinAmount} coins**?`)
         
     const msg = await message.channel.send(embed);
 

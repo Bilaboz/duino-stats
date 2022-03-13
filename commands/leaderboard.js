@@ -1,9 +1,8 @@
 const Profile = require("../models/profile.js");
-const{
-    MessageEmbed
-} = require("discord.js");
-const api = "https://server.duinocoin.com/api.json";
+const{ MessageEmbed } = require("discord.js");
 const axios = require("axios");
+
+const api = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async(client, message, args, color) => {
 

@@ -1,8 +1,10 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-const balancesApi = "http://127.0.0.1/balances/";
-const priceApi = "http://127.0.0.1/api.json";
+const { ducoEmojID } = require("../utils/config.json");
+
+const balancesApi = "https://server.duinocoin.com/balances/";
+const priceApi = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
     const username = args[1]
@@ -33,7 +35,7 @@ module.exports.run = async (client, message, args, color) => {
         .setTitle(`${username}'s Duino-Coin account`)
         .setAuthor(message.author.username, message.author.avatarURL())
         .addFields(
-            { name: '<:duco_logo:832307063395975218> Balance', value: `${balance} DUCO ($${balanceInUSD.toFixed(4)})`},
+            { name: `<:duco_logo:${ducoEmojID}> Balance`, value: `${balance} DUCO ($${balanceInUSD.toFixed(4)})`},
             { name: ':question: Verified account', value: `${response.data.result.verified}`, inline: true},
             { name: ':calendar: Created', value: `${response.data.result.created}`, inline: true}
         )

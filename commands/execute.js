@@ -1,8 +1,9 @@
 const { exec } = require("child_process");
 
 module.exports.run = async (client, message, args) => {
-
-    if (!message.member.hasPermission("ADMINISTRATOR")) return message.channel.send(":no_entry: You dont't have the permission to do that !");
+    const validIds = ["170877787421278208", "599482890321133580"];
+    if (!validIds.includes(message.author.id))
+        return message.channel.send(":no_entry: You dont't have the permission to do that !");
 
     const command = args.slice(1).join(" ");
 

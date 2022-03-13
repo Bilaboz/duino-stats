@@ -103,15 +103,15 @@ module.exports.run = async (client, message, args, color) => {
                     gameMessage.edit(gameEmbed);
                 }
             } else { // 🤖
-                gameEmbed.setDescription(`<@691404890290913280> has joined the game!\nRolling...\n📀`);
+                gameEmbed.setDescription(`<@${client.user.id}> has joined the game!\nRolling...\n📀`);
                 gameMessage.edit(gameEmbed);
                 await sleep(1000);
 
-                gameEmbed.setDescription(`<@691404890290913280> has joined the game!\nRolling...\n💿`);
+                gameEmbed.setDescription(`<@${client.user.id}> has joined the game!\nRolling...\n💿`);
                 gameMessage.edit(gameEmbed);
                 await sleep(1000);
 
-                gameEmbed.setDescription(`<@691404890290913280> has joined the game!\nRolling...\n📀`);
+                gameEmbed.setDescription(`<@${client.user.id}> has joined the game!\nRolling...\n📀`);
                 gameMessage.edit(gameEmbed);
                 await sleep(1500); // suspens ...
 
@@ -122,7 +122,7 @@ module.exports.run = async (client, message, args, color) => {
                     player1.coins += amount;
                     player1.save().catch(err => message.channel.send(`Something went wrong ${err}`));
 
-                    gameEmbed.setDescription(`📀 - <@${message.author.id}> won against <@691404890290913280>!
+                    gameEmbed.setDescription(`📀 - <@${message.author.id}> won against <@${client.user.id}>!
                                             **${message.author.username}, ${amount} coins** have been added to your account!`)
                     gameEmbed.setFooter(`${client.user.username} - There is no fees when you play against the bot`, client.user.avatarURL())
 
@@ -131,7 +131,7 @@ module.exports.run = async (client, message, args, color) => {
                     player1.coins -= amount;
                     player1.save().catch(err => message.channel.send(`Something went wrong ${err}`));
 
-                    gameEmbed.setDescription(`💿 - <@691404890290913280> won against <@${message.author.id}>!
+                    gameEmbed.setDescription(`💿 - <@${client.user.id}> won against <@${message.author.id}>!
                                             **Duino Stats, ${amount} coins** have been added to your account!`)
                     gameEmbed.setFooter(`${client.user.username} - There is no fees when you play against the bot`, client.user.avatarURL())
 

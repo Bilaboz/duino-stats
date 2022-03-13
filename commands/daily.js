@@ -52,9 +52,10 @@ module.exports.run = async (client, message, args, color) => {
             if (!query.streak) query.streak = 0;
 
             if (difference >= 48) {
-		if (query.streak)
+                if (query.streak) {
                     finalstring += `\nYou lost your daily streak of **${query.streak}** ❌`;
-                query.streak = 0;
+                    query.streak = 0;
+                }
             } else {
                 query.streak += 1;
                 finalstring += `\nYour daily streak is now **${query.streak}**!`;

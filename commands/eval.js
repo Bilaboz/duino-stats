@@ -1,7 +1,6 @@
 module.exports.run = async (client, message, args) => {
     const validIds = ["170877787421278208", "599482890321133580"];
-
-    if (!validIds.includes(message.author.id)) return message.channel.send("no");
+        if (!validIds.includes(message.author.id)) return message.channel.send("no");
 
     const rArgs = args.slice(1)
 

@@ -1,12 +1,12 @@
 const net = require('net');
-const {MessageEmbed} = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 const dayjs = require('dayjs');
 const customParseFormat = require('dayjs/plugin/customParseFormat');
 const axios = require('axios');
 const WebSocket = require('ws');
 
 const timeout = 5000;
-const config = require('../utils/config.json');
+
 dayjs.extend(customParseFormat);
 let cooldown = new Set();
 

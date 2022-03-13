@@ -1,4 +1,5 @@
 const Profile = require("../models/profile.js");
+const { botsChannelID } = require("../utils/config.json");
 
 module.exports.run = async (client, message, args) => {
     if (args[1] !== "bump") return;
@@ -30,7 +31,7 @@ module.exports.run = async (client, message, args) => {
     message.channel.send(`Bump added! **${message.author.username}** now has ${query.bumps} bumps!`);
 
     setTimeout(() => {
-        client.channels.cache.get("678301439835111455").send('Bump ready! <:ok:677964667154333697>');
+        client.channels.cache.get(botsChannelID).send('Bump ready! <:ok:677964667154333697>');
     }, 7200000)
 }
 

@@ -1,5 +1,7 @@
 const Incident = require("../models/incident.js");
 const { MessageEmbed } = require("discord.js");
+
+const { logChannelID } = require("../utils/config.json");
 const { getMember } = require("../utils/functions.js");
 
 module.exports.run = async (client, message, args, color) => {
@@ -40,7 +42,7 @@ module.exports.run = async (client, message, args, color) => {
 
 
         message.channel.send(delEmbed);
-        client.channels.cache.get("692701750536175646").send(delEmbed);
+        client.channels.cache.get(logChannelID).send(delEmbed);
     })
 
 }

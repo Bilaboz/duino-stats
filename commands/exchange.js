@@ -1,6 +1,5 @@
 const Profile = require("../models/profile.js");
 const { MessageEmbed } = require("discord.js");
-const net = require("net");
 const axios = require("axios");
 
 const { logChannelID } = require("../utils/config.json");

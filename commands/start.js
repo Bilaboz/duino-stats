@@ -4,7 +4,6 @@ const axios = require("axios");
 
 const { statisticsChannelID } = require("../utils/config.json");
 const api = "https://server.duinocoin.com/api.json"
-const nodeapi = "http://www.node-s.co.za/api/v1/duco/exchange_rate";
 
 module.exports.run = async (client, message) => {
     let m;
@@ -29,14 +28,6 @@ module.exports.run = async (client, message) => {
             tempEmbed.setDescription(`\`ERROR\`: Error while fetching the API\n\`${response.status} ${response.statusText}\``);
             return msg.edit(tempEmbed);
         }
-        
-        let nodesPrice
-        try {
-            const noderesponse = await axios.get(nodeapi);
-            nodesPrice = noderesponse.data.value;
-        } catch (err) {
-            nodesPrice = "error";
-        }
 
         const embed = new MessageEmbed()
         .setColor(color.yellow)
@@ -53,7 +44,6 @@ module.exports.run = async (client, message) => {
         .addField(`:hash: Last block hash`, stats["Last block hash"], true)
         .addField(":link: Active connections", stats["Active connections"], true)
         .addField(":desktop: Server CPU usage", stats["Server CPU usage"] + "%", true)
-        .addField(":currency_exchange: Node-S Exchange price", nodesPrice + "$", true)
         .setThumbnail("https://raw.githubusercontent.com/revoxhere/duino-coin/master/Resources/duco.png")
         .setFooter("The statistics are updated every 60 seconds", client.user.avatarURL(),)
         .setTimestamp()

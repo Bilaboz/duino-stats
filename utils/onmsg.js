@@ -4,7 +4,14 @@ const dayjs = require("dayjs");
 const Profile = require("../models/profile");
 const Incident = require("../models/incident");
 const Count = require("../models/count");
-const { logChannelID, countingChannelID, suggestionChannelID, trueEmojiID, falseEmojiID } = require("../utils/config.json");
+const {
+    logChannelID,
+    countingChannelID,
+    suggestionChannelID,
+    trueEmojiID,
+    falseEmojiID,
+    activeMemberRoleID
+} = require("../utils/config.json");
 
 let cooldown = new Set();
 dayjs.extend(require('dayjs/plugin/utc'));
@@ -238,6 +245,11 @@ module.exports.run = async (client, message, args, color) => {
                 }
 
                 query.save().catch(err => message.channel.send(`Oops something went wrong ${err} at onmsg lmao`));
+
+                if (query.level >= 5 && !message.member.roles.cache.has(activeMemberRoleID)) {
+                    const role = message.guild.roles.cache.get(activeMemberRoleID);
+                    message.member.roles.add(role);
+                }
             }
         })
     }

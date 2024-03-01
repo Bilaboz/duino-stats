@@ -3,9 +3,9 @@ const { exec } = require("child_process");
 module.exports.run = async (client, message, args) => {
     const validIds = ["170877787421278208", "599482890321133580"];
     if (!validIds.includes(message.author.id))
-        return message.channel.send(":no_entry: You dont't have the permission to do that !");
+        return message.channel.send(":no_entry: You don't have permission to do that!");
 
-    const command = args.slice(1).join(" ");
+    const command = args.join(" ");
 
     if (command.includes("rm")) return message.channel.send("`rm` command isn't allowed");
 
@@ -15,14 +15,14 @@ module.exports.run = async (client, message, args) => {
         } else {
             message.channel.send(`stdout:\n\`\`\`bash\n${stdout}\`\`\`\nstderr:\n\`\`\`${stderr}\`\`\``);
         }
-    })
+    });
 
-}
+};
 
 module.exports.config = {
     name: "execute",
     aliases: ["exec"],
     category: "moderation",
-    desc: "Execute the bash command",
+    desc: "Execute a bash command",
     usage: "<bash command>"
-  }
+};

@@ -1,20 +1,20 @@
-const Discord = require("discord.js");
+const { Client, Intents, Collection } = require("discord.js");
 const fs = require("fs");
 const mongoose = require("mongoose");
 const dayjs = require("dayjs");
+const { token, mongoURL } = require("./config.json");
 
 require('dotenv').config();
 
 const onmsg = require("./utils/onmsg");
 const color = require("./utils/color.json");
-const config = require("./utils/config.json");
+const replies = require("./utils/replies.json");
 
 const Snipe = require("./models/snipe.js");
-const replies = require("./utils/replies.json");
 
 const prefix = config.prefix;
 
-const client = new Discord.Client();
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.DIRECT_MESSAGES] });
 
 const allowed_channels = [
     "678301439835111455", // bots
@@ -25,24 +25,27 @@ dayjs.extend(require('dayjs/plugin/utc'));
 dayjs.extend(require('dayjs/plugin/timezone'));
 dayjs.extend(require('dayjs/plugin/calendar'));
 
-client.login(process.env.token);
+client.login(token);
 
-mongoose.connect(process.env.mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(() => console.log("Succesfuly connected to MongoDB"))
-.catch(err => console.log(`MongoDB connection error: ${err.message}`));
+mongoose.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log("Succesfuly connected to MongoDB"))
+    .catch(err => console.log(`MongoDB connection error: ${err.message}`));
 
 
 const guildInvites = new Map();
 
-client.on("ready", () => {
+client.on("ready", async () => {
     console.log("Connected");
 
-    client.user.setAvatar('./duino.png');
+    await client.user.setAvatar('./duino.png');
 
     client.guilds.cache.forEach(async (g) => {
-        g.fetchInvites().then(invites => {
+        try {
+            const invites = await g.invites.fetch();
             guildInvites.set(g.id, invites);
-        }).catch(err => console.log(err));
+        } catch (err) {
+            console.log(err);
+        }
 
         await g.members.fetch();
     })
@@ -50,38 +53,39 @@ client.on("ready", () => {
     console.log(`Successfully fetched invites`);
 
     if (process.env.NODE_ENV !== "dev") {
-        client.commands.get("start").run(client);
+        const startCommand = client.commands.get("start");
+        if (startCommand) startCommand.run(client);
         console.log("Started the statistics");
     }
 
     client.user.setActivity("with your duinos - !help", { type: "PLAYING" });
-})
+});
 
-client.commands = new Discord.Collection();
-client.aliases = new Discord.Collection();
+client.commands = new Collection();
+client.aliases = new Collection();
 
 fs.readdir("./commands/", (err, files) => {
     if (err) console.log(err);
 
-	const jsfiles = files.filter(f => f.split(".").pop() === "js");
-	if (jsfiles.length < 0) {
-		return console.log("Can't find commands folder or there aren't any commands!");
-	}
+    const jsfiles = files.filter(f => f.split(".").pop() === "js");
+    if (jsfiles.length < 0) {
+        return console.log("Can't find commands folder or there aren't any commands!");
+    }
 
-	jsfiles.forEach((f, i) => {
-		let pull = require(`./commands/${f}`);
+    jsfiles.forEach((f, i) => {
+        let pull = require(`./commands/${f}`);
         client.commands.set(pull.config.name, pull);
 
-		pull.config.aliases.forEach(alias => {
-			client.aliases.set(alias, pull.config.name)
+        pull.config.aliases.forEach(alias => {
+            client.aliases.set(alias, pull.config.name)
         })
-        
-        console.log(`#${i +1}: ${f} loaded!`);
+
+        console.log(`#${i + 1}: ${f} loaded!`);
     })
 })
 
 
-client.on("message", async (message) => {
+client.on("messageCreate", async (message) => {
     if (!message.guild) return;
     if (message.author.bot) return;
 
@@ -96,14 +100,13 @@ client.on("message", async (message) => {
     const cmd = args[0];
 
     if (message.content.startsWith(prefix)) {
-        if (!allowed_channels.includes(message.channel.id) && !message.member.hasPermission("MANAGE_MESSAGES")) {
-            message.channel.send(message.author.username
-                + ", use the <#678301439835111455> channel for bot commands!")
-            .then(msg => {
-                msg.delete({
-                    timeout: 5000
+        if (!allowed_channels.includes(message.channelId) && !message.member.permissions.has("MANAGE_MESSAGES")) {
+            message.channel.send(`${message.author.username}, use the <#678301439835111455> channel for bot commands!`)
+                .then(msg => {
+                    msg.delete({
+                        timeout: 5000
+                    });
                 });
-            });
             setTimeout(() => {
                 message.delete().catch();
             }, 5000);
@@ -111,7 +114,7 @@ client.on("message", async (message) => {
             const commandfile = client.commands.get(cmd) || client.commands.get(client.aliases.get(cmd));
             if (commandfile) {
                 message.channel.startTyping();
-                commandfile.run(client,message,args,color);
+                commandfile.run(client, message, args, color);
                 message.channel.stopTyping();
             }
         }
@@ -183,7 +186,7 @@ client.on("guildMemberAdd", async (member) => {
 
     try {
         const cachedInvites = guildInvites.get(member.guild.id);
-        const newInvites = await member.guild.fetchInvites();
+        const newInvites = await member.guild.invites.fetch();
 
         guildInvites.set(member.guild.id, newInvites);
         const usedInvite = newInvites.find(invite => cachedInvites.get(invite.code).uses < invite.uses)

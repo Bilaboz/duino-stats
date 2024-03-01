@@ -6,43 +6,44 @@ const { ducoEmojiID } = require("../utils/config.json");
 const api = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
-
-    let response;
     try {
-        response = await axios.get(api);
+        const response = await axios.get(api);
+        const {
+            "Duco price": price,
+            "Duco price BCH": price_bch,
+            "Duco price TRX": price_trx,
+            "Duco JustSwap price": justswapprice,
+            "Duco Node-S price": nodeprice,
+        } = response.data;
+
+        const embed = new MessageEmbed()
+            .setAuthor(message.author.username, message.author.avatarURL())
+            .addFields(
+                { name: `<:duco:${ducoEmojiID}> DUCO Exchange (XMG)`, value: `$${price}`, inline: true },
+                { name: `<:duco:${ducoEmojiID}> DUCO Exchange (BCH)`, value: `$${price_bch}`, inline: true },
+                { name: `<:duco:${ducoEmojiID}> DUCO Exchange (TRX)`, value: `$${price_trx}`, inline: true },
+                { name: ":currency_exchange: Node-S Exchange", value: `$${nodeprice}`, inline: true },
+                { name: ":white_flower: JustSwap", value: `$${justswapprice}`, inline: true },
+                { name: ":person_standing: otc-trading", value: "check <#692840562067243008>", inline: true }
+            )
+            .setDescription("Please keep in mind that the price on the chart is updated every day.")
+            .attachFiles("https://server.duinocoin.com/prices.png")
+            .setImage('attachment://prices.png')
+            .setFooter(client.user.username, client.user.avatarURL())
+            .setTimestamp()
+            .setColor(color.yellow);
+
+        message.channel.send(embed);
     } catch (err) {
         console.log(err);
-        return message.channel.send("Can't fetch the data, the API is probably down <:why:677964669532504094>");
+        message.channel.send("Can't fetch the data, the API is probably down <:why:677964669532504094>");
     }
-
-    const price = response.data["Duco price"];
-    const price_bch = response.data["Duco price BCH"];
-    const price_trx = response.data["Duco price TRX"];
-    const justswapprice = response.data["Duco JustSwap price"];
-    const nodeprice = response.data["Duco Node-S price"];
-
-    const embed = new MessageEmbed()
-        .setAuthor(message.author.username, message.author.avatarURL())
-        .addField(`<:duco:${ducoEmojiID}> DUCO Exchange (XMG)`, `$${price}`, true)
-        .addField(`<:duco:${ducoEmojiID}> DUCO Exchange (BCH)`, `$${price_bch}`, true)
-        .addField(`<:duco:${ducoEmojiID}> DUCO Exchange (TRX)`, `$${price_trx}`, true)
-        .addField(":currency_exchange: Node-S Exchange", `$${nodeprice}`, true)
-        .addField(":white_flower: JustSwap", `$${justswapprice}`, true)
-        .addField(":person_standing: otc-trading", `check <#692840562067243008>`, true)
-        .setDescription(`Please keep in mind that price on the chart is updated every 1 day.`)
-        .attachFiles("https://server.duinocoin.com/prices.png")
-        .setImage('attachment://prices.png')
-        .setFooter(client.user.username, client.user.avatarURL())
-        .setTimestamp()
-        .setColor(color.yellow)
-
-    message.channel.send(embed);
-}
+};
 
 module.exports.config = {
     name: "price",
     aliases: [],
     category: "general",
-    desc: "Show current estimated DUCO price",
-    usage: ""
-}
+    desc: "Show the current estimated DUCO price",
+    usage: "",
+};

@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const profileSchema = mongoose.Schema ({
+const profileSchema = new Schema({
     username: String,
     userID: String,
     guildID: String,
@@ -12,6 +12,6 @@ const profileSchema = mongoose.Schema ({
     pDesc: String,
     lastClaim: Number,
     streak: Number
-})
+});
 
-module.exports = mongoose.model("Profile", profileSchema);
+module.exports = model("Profile", profileSchema);

@@ -1,13 +1,13 @@
 const { MessageEmbed } = require("discord.js");
 const axios = require("axios");
 
-const { ducoEmojID } = require("../utils/config.json");
+const { ducoEmojiID } = require("../utils/config.json");
 
 const balancesApi = "https://server.duinocoin.com/balances/";
 const priceApi = "https://server.duinocoin.com/api.json";
 
 module.exports.run = async (client, message, args, color) => {
-    const username = args[1]
+    const username = args[0];
     if (!username) return message.channel.send("Provide a username first");
 
     let balance, response;
@@ -35,17 +35,17 @@ module.exports.run = async (client, message, args, color) => {
         .setTitle(`${username}'s Duino-Coin account`)
         .setAuthor(message.author.username, message.author.avatarURL())
         .addFields(
-            { name: `<:duco_logo:${ducoEmojID}> Balance`, value: `${balance} DUCO ($${balanceInUSD.toFixed(4)})`},
+            { name: `<:duco_logo:${ducoEmojiID}> Balance`, value: `${balance} DUCO ($${balanceInUSD.toFixed(4)})`},
             { name: ':question: Verified account', value: `${response.data.result.verified}`, inline: true},
             { name: ':calendar: Created', value: `${response.data.result.created}`, inline: true}
         )
         .setDescription(`Tip: try **+bal ${username}** to view more stats using **Duino Stats Mini**`)
         .setFooter(client.user.username, client.user.avatarURL())
         .setTimestamp()
-        .setColor(color.yellow)
+        .setColor(color.yellow);
         
-    message.channel.send(embed);
-}
+    message.channel.send({ embeds: [embed] });
+};
 
 module.exports.config = {
     name: "balance",
@@ -53,4 +53,4 @@ module.exports.config = {
     category: "general",
     desc: "Get user balance",
     usage: "<DUCO username>"
-}
+};

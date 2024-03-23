@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const incidentSchema = mongoose.Schema ({
+const incidentSchema = new Schema({
     username: String,
     userID: String,
-    reason: Array,
-    type: Array,
-    moderator: Array,
-    time: Array,
+    reason: [String],
+    type: [String],
+    moderator: [String],
+    time: [Date],
     count: Number
 });
 
-module.exports = mongoose.model("Incident", incidentSchema);
+module.exports = model("Incident", incidentSchema);

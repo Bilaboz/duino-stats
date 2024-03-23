@@ -1,16 +1,14 @@
 {
-
     "cyan": "#3498DB",
-    "lime": "00FF00",
-    "red": "FF0000",
+    "lime": "#00FF00",
+    "red": "#FF0000",
     "purple": "#9B59B6",
-    "blue": "0000FF",
-    "yellow": "FFFF00",
-    "black": "000000",
-    "white": "FFFFFF",
-    "orange": "FF8000",
-    "rose": "FF00FF",
+    "blue": "#0000FF",
+    "yellow": "#FFFF00",
+    "black": "#000000",
+    "white": "#FFFFFF",
+    "orange": "#FF8000",
+    "rose": "#FF00FF",
     "green": "#2ECC71",
     "pastelgreen": "#9ff283"
-
 }

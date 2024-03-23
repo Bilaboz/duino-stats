@@ -1,13 +1,13 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const snipeSchema = mongoose.Schema ({
-    date: String,
-    content: String,
-    authorAvatar: String,
-    authorUsername: String,
-    channel: String,
-    isImage: Boolean,
-    attachment: String
-})
+const snipeSchema = new Schema({
+    date: { type: String, required: true },
+    content: { type: String, required: true },
+    authorAvatar: { type: String, required: true },
+    authorUsername: { type: String, required: true },
+    channel: { type: String, required: true },
+    isImage: { type: Boolean, required: true },
+    attachment: { type: String, default: null }
+});
 
-module.exports = mongoose.model("Snipe", snipeSchema);
+module.exports = model("Snipe", snipeSchema);

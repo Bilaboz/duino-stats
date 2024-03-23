@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const { Schema, model } = require("mongoose");
 
-const countSchema = mongoose.Schema ({
+const countSchema = new Schema({
     record: Number,
     count: Number,
     guildId: String
-})
+});
 
-module.exports = mongoose.model("Count", countSchema);
+module.exports = model("Count", countSchema);

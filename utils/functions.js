@@ -4,42 +4,29 @@ module.exports = {
     getMember: (message, toFind = '') => {
         toFind = toFind.toLowerCase();
 
-        let target = message.guild.members.cache.get(toFind);
-        if (!target && message.mentions.members) target = message.mentions.members.first();
+        let target = message.guild.members.cache.get(toFind) || message.mentions.members.first();
 
         if (!target && toFind) {
-            target = message.guild.members.cache.filter(member => {
-                return member.displayName.toLowerCase().includes(toFind) || member.user.tag.toLowerCase().includes(toFind);
-            });
+            target = message.guild.members.cache.find(member => 
+                member.displayName.toLowerCase().includes(toFind) || 
+                member.user.tag.toLowerCase().includes(toFind)
+            );
 
-            if (!target.size) {
-                target = message.member;
-            } else if (target.size === 1) {
-                target = target.first();
-            } else {
-                let finalStr = "Multiple users found! Please use `id` / `mention`\n\n"
-                target.forEach(u => {
-                    finalStr += `\`${u.user.username}#${u.user.discriminator}\` - \`${u.user.id}\`\n`;
-                })
-
-                if (finalStr.length > 2048) {
-                    message.channel.send("Too many users found!");
-                    return -1;
-                }
-        
+            if (!target) {
+                return message.member;
+            } else if (target) {
                 const multipleEmbed = new MessageEmbed()
-                    .setAuthor(message.author.username, message.author.avatarURL())
-                    .setDescription(finalStr)
+                    .setAuthor(message.author.username, message.author.displayAvatarURL())
+                    .setDescription(`Multiple users found! Please use \`id\` / \`mention\`\n\n${target.user.username}#${target.user.discriminator} - \`${target.id}\``)
                     .setColor("#00aede")
-                    .setFooter("Duino Stats", "https://cdn.discordapp.com/avatars/691404890290913280/82a989583ce771a37676b58f07731c85.webp") // doing this manually to avoid passing client as a third argument
-                    .setTimestamp()
-                    
-                message.channel.send(multipleEmbed);
-                return -1
+                    .setFooter("Duino Stats", "https://cdn.discordapp.com/avatars/691404890290913280/82a989583ce771a37676b58f07731c85.webp")
+                    .setTimestamp();
+                
+                message.channel.send({ embeds: [multipleEmbed] });
+                return null;
             }
         }
             
-        if (!target) target = message.member;
-        return target;
+        return target || message.member;
     }
 }

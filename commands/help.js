@@ -1,5 +1,5 @@
 const { MessageEmbed } = require("discord.js");
-const { prefix } = require("../utils/config.json")
+const { prefix } = require("../utils/config.json");
 
 module.exports.run = async (client, message, args, color) => {
 
@@ -10,36 +10,31 @@ module.exports.run = async (client, message, args, color) => {
             .setThumbnail(client.user.avatarURL())
             .setFooter(client.user.username, client.user.avatarURL())
             .setDescription("`!help <command>` to get full command info")
-            .setTimestamp()
+            .setTimestamp();
 
-        const genCommands = client.commands
-            .filter(c => c.config.category === "general")
-            .map(c => `\`${prefix}${c.config.name}\``)
-            .join("\n")
+        const categories = {
+            "general": "General",
+            "economy": "Economy",
+            "admin": "Admin",
+            "moderation": "Moderation"
+        };
 
-        const ecoCommands = client.commands
-            .filter(c => c.config.category === "economy")
-            .map(c => `\`${prefix}${c.config.name}\``)
-            .join("\n")
-
-        const admCommands = client.commands
-            .filter(c => c.config.category === "admin")
-            .map(c => `\`${prefix}${c.config.name}\``)
-            .join("\n")
-
-        const modCommands = client.commands
-            .filter(c => c.config.category === "moderation")
-            .map(c => `\`${prefix}${c.config.name}\``)
-            .join("\n")
-
-        embed.addField("General", genCommands, true);
-        embed.addField("Economy", ecoCommands, true);
-        embed.addField("Admin", admCommands, true);
-        embed.addField("Moderation", modCommands, true);
+        for (const categoryKey in categories) {
+            const categoryCommands = client.commands
+                .filter(c => c.config.category === categoryKey)
+                .map(c => `\`${prefix}${c.config.name}\``)
+                .join("\n");
+                
+            if (categoryCommands) {
+                embed.addField(categories[categoryKey], categoryCommands, true);
+            }
+        }
 
         message.channel.send(embed);
     } else {
-        const command = client.commands.get(args[1].toLowerCase());
+        const commandName = args[1].toLowerCase();
+        const command = client.commands.get(commandName) || client.commands.find(cmd => cmd.config.aliases && cmd.config.aliases.includes(commandName));
+
         if (command) {
             const uppercaseCommand = command.config.name.charAt(0).toUpperCase() + command.config.name.slice(1);
 
@@ -48,12 +43,14 @@ module.exports.run = async (client, message, args, color) => {
                 .setColor(color.yellow)
                 .setFooter(client.user.username, client.user.avatarURL())
                 .setTimestamp()
-                .setDescription(`Command arguments: \`<>\` = required \`()\` = optional\n\n**Description**: ${command.config.desc}\n**Usage**: \`${prefix}${command.config.name} ${command.config.usage}\`\n**Aliases**: \`${command.config.aliases.join(", ")}\``)
+                .setDescription(`Command arguments: \`<>\` = required \`()\` = optional\n\n**Description**: ${command.config.desc}\n**Usage**: \`${prefix}${command.config.name} ${command.config.usage}\`\n**Aliases**: ${command.config.aliases.length ? command.config.aliases.join(", ") : "None"}`);
 
             message.channel.send(hcEmbed);
+        } else {
+            message.channel.send("That command doesn't exist!");
         }
     }
-}
+};
 
 module.exports.config = {
     name: "help",
@@ -61,4 +58,4 @@ module.exports.config = {
     category: "general",
     desc: "Show the available commands",
     usage: "(command)"
-}
+};

@@ -2,50 +2,63 @@ const Profile = require("../models/profile.js");
 const { getMember } = require("../utils/functions.js");
 
 module.exports.run = async (client, message, args) => {
-    if(!message.member.hasPermission("ADMINISTRATOR")) return message.reply("<https://www.youtube.com/watch?v=dQw4w9WgXcQ>");
+    // Check if the user has administrator permission
+    if (!message.member.hasPermission("ADMINISTRATOR")) {
+        return message.reply("You don't have permission to do this.");
+    }
 
-    if (!args[1]) return message.channel.send("Please specify a user");
+    // Check if a user and amount are specified
+    if (!args[1] || !args[2]) {
+        return message.channel.send("Please specify a user and an amount.");
+    }
 
+    // Get the target user
     let tUser = getMember(message, args[1]);
     if (tUser === -1) return;
     tUser = tUser.user;
 
-    if (!tUser) return message.channel.send("Please specify a user");
+    // Check if a valid user is specified
+    if (!tUser) {
+        return message.channel.send("Please specify a valid user.");
+    }
 
+    // Parse the amount and check if it's valid
     const amount = parseInt(args[2]);
-    if (!amount) return message.channel.send("Please specify desired amount to remove");
-    if (amount < 0) return message.channel.send("Don't specify negative numbers. Use !add instead");
+    if (isNaN(amount) || amount < 0) {
+        return message.channel.send("Please specify a valid amount.");
+    }
 
-    const validTypes = ["bump", "bumps", "coin", "coins"];
+    // Check if a valid type is specified
+    const type = args[3]?.toLowerCase();
+    if (!type || (type !== "bump" && type !== "bumps" && type !== "coin" && type !== "coins")) {
+        return message.channel.send("Please specify a valid type (`bump(s)` or `coin(s)`).");
+    }
 
-    const type = args[3];
-    if (!type || !validTypes.includes(args[3])) return message.channel.send("Please specify what do you want to remove (`bump(s)` or `coin(s)`)");
-
+    // Find the user's profile
     const query = await Profile.findOne({ userID: tUser.id, guildID: message.guild.id });
 
-    if (type === "bump" || type === "bumps") {
-        if (!query) {
-            message.channel.send(`This poor guy doesn't even have a profile, leave him alone`);
-        } else {
-            query.bumps -= amount;
-            query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-            message.channel.send(`Successfully removed **${amount}** from to **${tUser.username}**`);
-        }
-    } else if (type === "coin" || type === "coins") {
-        if (!query) {
-            message.channel.send(`This poor guy doesn't even have a profile, leave him alone`);
-        } else {
-            query.coins -= amount;
-            query.save().catch(err => message.channel.send(`Something went wrong ${err}`));
-            message.channel.send(`Successfully removed **${amount}** coins from **${tUser.username}**`);
-        }
+    // Check if the user has a profile
+    if (!query) {
+        return message.channel.send("This user doesn't have a profile.");
     }
-}
+
+    // Update the user's profile based on the specified type
+    if (type === "bump" || type === "bumps") {
+        query.bumps -= amount;
+        message.channel.send(`Successfully removed ${amount} bump(s) from ${tUser.username}.`);
+    } else if (type === "coin" || type === "coins") {
+        query.coins -= amount;
+        message.channel.send(`Successfully removed ${amount} coin(s) from ${tUser.username}.`);
+    }
+
+    // Save the changes to the profile
+    query.save().catch(err => message.channel.send(`Something went wrong: ${err}`));
+};
 
 module.exports.config = {
     name: "remove",
     aliases: [],
     category: "admin",
-    desc: "Remove coins/bumps from a user",
+    desc: "Remove coins/bumps from a user.",
     usage: "<user> <amount> <type>"
-}
+};

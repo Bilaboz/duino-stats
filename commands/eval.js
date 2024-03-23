@@ -1,8 +1,8 @@
 module.exports.run = async (client, message, args) => {
     const validIds = ["170877787421278208", "599482890321133580"];
-        if (!validIds.includes(message.author.id)) return message.channel.send("no");
+    if (!validIds.includes(message.author.id)) return message.channel.send("no");
 
-    const rArgs = args.slice(1)
+    const rArgs = args;
 
     const clean = (text) => {
         if (typeof(text) === "string") {
@@ -10,7 +10,7 @@ module.exports.run = async (client, message, args) => {
         } else {
             return text;
         }
-    }
+    };
 
     try {
         const code = rArgs.join(" ");
@@ -19,15 +19,13 @@ module.exports.run = async (client, message, args) => {
         
         let evaled = eval(code);
 
-        if (typeof evaled !== "string")
-        evaled = require("util").inspect(evaled);
+        if (typeof evaled !== "string") evaled = require("util").inspect(evaled);
 
-        message.channel.send(clean(evaled), {code:"js"});
+        message.channel.send(clean(evaled), { code: "js" });
     } catch (err) {
         message.channel.send(`\`ERROR\` \`\`\`JS\n${clean(err)}\n\`\`\``);
     }
-
-}
+};
 
 module.exports.config = {
     name: "eval",
@@ -35,4 +33,4 @@ module.exports.config = {
     category: "notlisted",
     desc: "eval command lol",
     usage: "<js code>"
-}
+};

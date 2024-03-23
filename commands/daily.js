@@ -9,12 +9,12 @@ module.exports.run = async (client, message, args, color) => {
         .setAuthor(message.author.username, message.author.avatarURL())
         .setColor("#52ff57")
         .setFooter(client.user.username, client.user.avatarURL())
-        .setTimestamp()
+        .setTimestamp();
 
     const query = await Profile.findOne({
         userID: message.author.id,
         guildID: message.guild.id
-    })
+    });
 
     if (!query) {
         const newProfile = new Profile({
@@ -27,16 +27,16 @@ module.exports.run = async (client, message, args, color) => {
             level: 1,
             lastClaim: now.unix(),
             streak: 0
-        })
+        });
 
-        newProfile.save().catch(err => message.channel.send(`Oops something went wrong ${err} lmao`));
+        await newProfile.save().catch(err => message.channel.send(`Oops something went wrong ${err} lmao`));
         dailyEmbed.setDescription(`**${message.author.username}** you successfully claimed your daily reward!\nYou got **10 bot coins** (0.1 DUCO) <:pepeclassy:701487042869329961>`);
-        return message.channel.send(dailyEmbed);
+        return message.channel.send({ embeds: [dailyEmbed] });
     }
     
     if (query.level <= 1) {
-        dailyEmbed.setDescription(`**${message.author.username}** you dont have a high enough level to do that`);
-        return message.channel.send(dailyEmbed);
+        dailyEmbed.setDescription(`**${message.author.username}** you don't have a high enough level to do that`);
+        return message.channel.send({ embeds: [dailyEmbed] });
     }
     
     let coinAmount = Math.floor((Math.random() * 10) + 25);
@@ -63,26 +63,26 @@ module.exports.run = async (client, message, args, color) => {
 
             query.coins += coinAmount;
             query.lastClaim = now.unix();
-            query.save().catch(err => message.channel.send(`Oops something went wrong ${err} lmao`));
+            await query.save().catch(err => message.channel.send(`Oops something went wrong ${err} lmao`));
 
             dailyEmbed.setDescription(finalstring);
-            message.channel.send(dailyEmbed);
+            message.channel.send({ embeds: [dailyEmbed] });
         } else {
             dailyEmbed.setColor(color.red);
             dailyEmbed.setDescription(`**${message.author.username}** you will be able to claim your daily reward after 0:00 UTC+1`);
 
-            message.channel.send(dailyEmbed)
+            message.channel.send({ embeds: [dailyEmbed] });
         }
     } else {
         query.streak = 0;
         query.coins += coinAmount;
         query.lastClaim = now.unix();
-        query.save().catch(err => message.channel.send(`Oops something went wrong ${err}`));
+        await query.save().catch(err => message.channel.send(`Oops something went wrong ${err}`));
 
         dailyEmbed.setDescription(finalstring);
-        message.channel.send(dailyEmbed);
+        message.channel.send({ embeds: [dailyEmbed] });
     }
-}
+};
 
 module.exports.config = {
     name: "daily",
@@ -90,4 +90,4 @@ module.exports.config = {
     category: "economy",
     desc: "Claim your daily reward",
     usage: ""
-}
+};

@@ -1,3 +1,5 @@
+### This branch has not been tested. For more info check https://github.com/Bilaboz/duino-stats/pull/10
+
 <h1 align="center">Welcome to duino-stats 👋</h1>
 <p align ="center">
     <a href="https://discord.gg/k48Ht5y">
